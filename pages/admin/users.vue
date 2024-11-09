@@ -3,7 +3,7 @@
     <div class="flex items-center justify-center w-full h-screen">
       <div
         id="ManageUser"
-        class="w-full h-[100vh] max-w-[1200px] bg-[#fafafa] p-6"
+        class="w-full h-[100vh] max-w-[1200px] bg-[#fafafa] p-6 rounded-lg"
       >
         <!-- Title -->
         <h1 class="text-2xl font-semibold text-start mb-6">User Management</h1>
@@ -12,19 +12,25 @@
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2 mb-6">
           <!-- Total Users -->
-          <div class="border border-gray-300 p-6 rounded-lg text-start">
+          <div
+            class="border border-gray-300 shadow-md p-6 rounded-lg text-start"
+          >
             <p class="text-lg font-semibold">Total Users</p>
             <p class="text-3xl font-bold">{{ totalUsers }}</p>
           </div>
 
           <!-- Active Users -->
-          <div class="border border-gray-300 p-6 rounded-lg text-start">
+          <div
+            class="border border-gray-300 shadow-md p-6 rounded-lg text-start"
+          >
             <p class="text-lg font-semibold">Farmers</p>
             <p class="text-3xl font-bold">{{ activeUsers }}</p>
           </div>
 
           <!-- Buyers -->
-          <div class="border border-gray-300 p-6 rounded-lg text-start">
+          <div
+            class="border border-gray-300 shadow-md p-6 rounded-lg text-start"
+          >
             <p class="text-lg font-semibold">Buyers</p>
             <p class="text-3xl font-bold">
               {{ suspendedUsers }}
@@ -33,7 +39,7 @@
 
           <!-- Suspended Users -->
           <div
-            class="border border-gray-300 bg-[#fafafa] p-6 rounded-lg text-start"
+            class="border border-gray-300 bg-[#fafafa] p-6 shadow-md rounded-lg text-start"
           >
             <p class="text-lg font-semibold">Suspended Users</p>
             <p class="text-3xl font-bold">
@@ -42,7 +48,9 @@
           </div>
 
           <!-- Active Users -->
-          <div class="border border-gray-300 p-6 rounded-lg text-start">
+          <div
+            class="border border-gray-300 p-6 shadow-md rounded-lg text-start"
+          >
             <p class="text-lg font-semibold">Active Users</p>
             <p class="text-3xl font-bold">
               {{ recentlyAddedUsers }}
@@ -88,17 +96,21 @@
 
         <!-- User Table -->
         <div
-          class="overflow-x-auto bg-[#ffffff] p-2 border rounded-lg shadow-sm"
+          class="overflow-x-auto bg-[#ffffff] border border-gray-300 rounded-md shadow-sm text-lg"
         >
           <table class="w-full table-auto">
             <thead>
               <tr>
-                <th class="py-2 px-4 border-b text-left">Name</th>
-                <th class="py-2 px-4 border-b text-left">Contact Number</th>
-                <th class="py-2 px-4 border-b text-left">Email</th>
-                <th class="py-2 px-4 border-b text-left">Role</th>
-                <th class="py-2 px-4 border-b text-left">Status</th>
-                <th class="py-2 px-4 border-b text-center">Actions</th>
+                <th class="py-2 px-4 border-b bg-gray-200 text-left">Name</th>
+                <th class="py-2 px-4 border-b bg-gray-200 text-left">
+                  Contact Number
+                </th>
+                <th class="py-2 px-4 border-b bg-gray-200 text-left">Email</th>
+                <th class="py-2 px-4 border-b bg-gray-200 text-left">Role</th>
+                <th class="py-2 px-4 border-b bg-gray-200 text-left">Status</th>
+                <th class="py-2 px-4 border-b bg-gray-200 text-center">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody>
