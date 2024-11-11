@@ -1,15 +1,13 @@
 -- CreateTable
-CREATE TABLE "Addresses" (
-    "id" SERIAL NOT NULL,
-    "userId" UUID NOT NULL,
-    "name" TEXT NOT NULL,
-    "address" TEXT NOT NULL,
-    "zipcode" TEXT NOT NULL,
-    "city" TEXT NOT NULL,
-    "country" TEXT NOT NULL,
-    "created_at" TIMESTAMPTZ(6) DEFAULT CURRENT_TIMESTAMP,
+CREATE TABLE users (
+    "user_id" uuid REFERENCES auth.users(id) ON DELETE CASCADE, 
+    "email" TEXT UNIQUE NOT NULL, 
+    "contact_number" TEXT, 
+    "role" TEXT DEFAULT 'USER', 
+    "status" TEXT DEFAULT 'ACTIVE', 
+    "created_at" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT "Addresses_pkey" PRIMARY KEY ("id")
+    PRIMARY KEY ("user_id")
 );
 
 -- CreateTable

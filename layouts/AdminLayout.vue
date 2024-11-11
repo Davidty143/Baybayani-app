@@ -82,14 +82,13 @@
             <li
               @mouseenter="isAccountMenu = true"
               @mouseleave="isAccountMenu = false"
-              class="relative flex items-center px-2.5 hover:text-[#0C6539] h-full cursor-pointer"
-              :class="
-                isAccountMenu
-                  ? 'bg-white border z-40 shadow-[0_15px_100px_40px_rgba(0,0,0,0.3)]'
-                  : 'border border-[#FAFAFA]'
-              "
+              class="relative flex items-center px-2.5 hover:text-[#FF4646] h-full cursor-pointer group"
             >
-              <Icon name="ph:user-light" size="32" class="text-[#0C6539]" />
+              <Icon
+                name="ph:user-light"
+                size="32"
+                class="text-[#0C6539] group-hover:text-[#FF4646]"
+              />
               <span class="ml-2">Admin</span>
               <!-- Add margin-left to space the text from the icon -->
 
