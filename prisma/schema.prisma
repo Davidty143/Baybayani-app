@@ -8,20 +8,22 @@ datasource db {
 }
 
 model User {
-  userId        String   @id @unique @default(uuid())
-  name          String   
-  email         String   @unique 
-  contactNumber String? 
-  role          Role     @default(USER) 
-  status        Status   @default(ACTIVE) 
-  createdAt     DateTime @default(now()) @db.Timestamptz(6)
-
-  orders        Orders[]
+  id            String   @id @unique @db.Uuid
+  email         String?  @unique
+  name          String
+  contactNumber String
+  created_at    DateTime? @default(now()) @db.Timestamptz(6)
+  orders        Orders[]  // One-to-many relation to Orders
 }
 
-enum Role {
-  USER
-  ADMIN
+
+model Profile {
+  id              String   @id @unique @db.Uuid
+  email           String?  @unique    
+  contact         String?
+  name            String?
+  role            String?
+  created_at      DateTime? @default(now()) @db.Timestamptz(6)
 }
 
 enum Status {
@@ -31,33 +33,34 @@ enum Status {
 }
 
 model Orders {
-  id         Int         @id @default(autoincrement())
-  userId     String      @db.Uuid 
+  id         String     @id @default(uuid()) @db.Uuid    // Use UUID for the order's primary key
+  userId     String     @db.Uuid                        // Foreign key pointing to User's `id`
   name       String
-  created_at DateTime?   @default(now()) @db.Timestamptz(6)
-  
-  user       User        @relation(fields: [userId], references: [userId])
+  address    String
+  created_at DateTime?  @default(now()) @db.Timestamptz(6)
   orderItem  OrderItem[]
 
+  // Relation to User model
+  user       User       @relation(fields: [userId], references: [id])
 }
 
 model OrderItem {
   id         Int       @id @default(autoincrement())
-  orderId    Int
+  orderId    String    @db.Uuid                          // Foreign key pointing to Orders' `id`
   productId  Int
   created_at DateTime? @default(now()) @db.Timestamptz(6)
   
+  // Relations to Orders and Products models
   order      Orders    @relation(fields: [orderId], references: [id])
   product    Products  @relation(fields: [productId], references: [id])
 }
 
 model Products {
-  id          Int        @id @default(autoincrement())
+  id          Int         @id @default(autoincrement())
   title       String
   description String
   url         String
   price       Int
-  created_at  DateTime?  @default(now()) @db.Timestamptz(6)
-  
+  created_at  DateTime?   @default(now()) @db.Timestamptz(6)
   orderItem   OrderItem[]
 }

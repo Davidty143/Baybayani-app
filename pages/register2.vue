@@ -23,6 +23,7 @@
 
       <!-- Registration Form -->
       <form @submit.prevent="register" class="space-y-4">
+        <!-- Email Input -->
         <div>
           <label for="email" class="block text-sm font-medium text-gray-700"
             >Email</label
@@ -37,6 +38,7 @@
           />
         </div>
 
+        <!-- Password Input -->
         <div>
           <label for="password" class="block text-sm font-medium text-gray-700"
             >Password</label
@@ -51,9 +53,10 @@
           />
         </div>
 
+        <!-- Name Input -->
         <div>
           <label for="name" class="block text-sm font-medium text-gray-700"
-            >Name</label
+            >Full Name</label
           >
           <input
             type="text"
@@ -65,36 +68,39 @@
           />
         </div>
 
+        <!-- Contact Number Input -->
         <div>
-          <label for="contact" class="block text-sm font-medium text-gray-700">
-            Contact Number
-          </label>
+          <label
+            for="contactNumber"
+            class="block text-sm font-medium text-gray-700"
+            >Contact Number</label
+          >
           <input
-            type="text"
-            id="contact"
-            v-model="contact"
+            type="tel"
+            id="contactNumber"
+            v-model="contactNumber"
             class="mt-1 w-full p-3 border border-gray-300 rounded-md"
             placeholder="Enter your contact number"
-            required
           />
         </div>
 
+        <!-- Role Input (Optional, could be a dropdown) -->
         <div>
-          <label for="role" class="block text-sm font-medium text-gray-700">
-            Role
-          </label>
+          <label for="role" class="block text-sm font-medium text-gray-700"
+            >Role</label
+          >
           <select
             id="role"
             v-model="role"
             class="mt-1 w-full p-3 border border-gray-300 rounded-md"
             required
           >
-            <option value="" disabled>Select your role</option>
-            <option value="User">User</option>
-            <option value="User">Admin</option>
+            <option value="USER">User</option>
+            <option value="ADMIN">Admin</option>
           </select>
         </div>
 
+        <!-- Submit Button -->
         <div>
           <button
             type="submit"
@@ -118,33 +124,58 @@
 <script setup>
 const client = useSupabaseClient();
 const email = ref("");
-const name = ref("");
-const role = ref("");
-const contact = ref(""); // Optional contact number
-const password = ref(null);
+const password = ref("");
+const name = ref(""); // Full name
+const contactNumber = ref(""); // Optional contact number
+const role = ref("USER"); // Default role is USER
 const errorMsg = ref(null);
 const successMsg = ref(null);
 
 const register = async () => {
   try {
-    const { error } = await client.auth.signUp({
+    // Register with Supabase Auth
+    const { data, error } = await client.auth.signUp({
       email: email.value,
       password: password.value,
       options: {
         data: {
           name: name.value,
-          contact: contact.value,
+          contactNumber: contactNumber.value,
           role: role.value,
         },
       },
     });
 
+    // Handle errors from Supabase Auth
     if (error) {
       errorMsg.value = error.message;
       successMsg.value = null;
-    } else {
-      successMsg.value = "Successfully registered!";
-      errorMsg.value = null;
+      return;
+    }
+
+    // Now that the user is registered, store the user details in Prisma
+    try {
+      const response = await useFetch("/api/createUser", {
+        method: "POST",
+        body: {
+          id: id.value,
+          email: email.value,
+          name: name.value || "New User", // Use name if provided, otherwise use part before @
+          contactNumber: contactNumber.value || "", // Optional field
+          role: "USER", // Role (USER/ADMIN)
+        },
+      });
+
+      if (response.success) {
+        successMsg.value = "Successfully registered!";
+        errorMsg.value = null;
+      } else {
+        errorMsg.value = "Error sa pag save :(";
+        successMsg.value = null;
+      }
+    } catch (error) {
+      errorMsg.value = "Error Tanan:(";
+      successMsg.value = null;
     }
   } catch (error) {
     errorMsg.value = error.message;
@@ -154,5 +185,5 @@ const register = async () => {
 </script>
 
 <style scoped>
-/* You can add additional custom styling here if needed */
+/* Add custom styles here if necessary */
 </style>
