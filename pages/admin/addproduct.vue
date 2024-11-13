@@ -13,9 +13,12 @@
           <div class="space-y-4">
             <!-- Title -->
             <div>
-              <label for="title" class="block text-sm font-medium text-gray-700"
-                >Product Title</label
+              <label
+                for="title"
+                class="block text-sm font-medium text-gray-700"
               >
+                Product Title
+              </label>
               <input
                 v-model="product.title"
                 id="title"
@@ -31,8 +34,9 @@
               <label
                 for="description"
                 class="block text-sm font-medium text-gray-700"
-                >Product Description</label
               >
+                Product Description
+              </label>
               <textarea
                 v-model="product.description"
                 id="description"
@@ -45,9 +49,12 @@
 
             <!-- Price -->
             <div>
-              <label for="price" class="block text-sm font-medium text-gray-700"
-                >Price (₱)</label
+              <label
+                for="price"
+                class="block text-sm font-medium text-gray-700"
               >
+                Price (₱)
+              </label>
               <input
                 v-model="product.price"
                 id="price"
@@ -61,9 +68,12 @@
 
             <!-- Image Upload -->
             <div>
-              <label for="image" class="block text-sm font-medium text-gray-700"
-                >Product Image</label
+              <label
+                for="image"
+                class="block text-sm font-medium text-gray-700"
               >
+                Product Image
+              </label>
               <input
                 type="file"
                 id="image"
@@ -128,12 +138,39 @@ const handleFileChange = (event) => {
   // Compress the image using Compressor.js
   new Compressor(file, {
     quality: 0.6, // Set image quality (60%)
-    maxWidth: 800, // Resize image to max width 800px
-    maxHeight: 800, // Resize image to max height 800px
+    maxWidth: 800, // Resize image to max width 800px (aspect ratio maintained)
+    maxHeight: 800, // Resize image to max height 800px (aspect ratio maintained)
     success(result) {
-      // Set the compressed image and create a preview
-      compressedImage.value = result;
-      imagePreview.value = URL.createObjectURL(result);
+      // Create a new image element to load the compressed image
+      const img = new Image();
+      img.onload = () => {
+        // Create a canvas to crop and resize the image to 800x800
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+
+        // Set the canvas size to 800x800
+        canvas.width = 800;
+        canvas.height = 800;
+
+        // Calculate the center crop coordinates
+        const x = (img.width - 800) / 2; // Crop from the center horizontally
+        const y = (img.height - 800) / 2; // Crop from the center vertically
+
+        // Draw the image on the canvas (crop and fit to 800x800)
+        ctx.drawImage(img, x, y, 800, 800, 0, 0, 800, 800);
+
+        // Convert the canvas to Blob for uploading
+        canvas.toBlob(
+          (blob) => {
+            // Use the Blob to create a preview URL
+            compressedImage.value = blob;
+            imagePreview.value = URL.createObjectURL(blob); // Display preview of the resized image
+          },
+          "image/jpeg",
+          0.8
+        ); // Compress the image further if necessary
+      };
+      img.src = URL.createObjectURL(result); // Load the compressed image into the img element
     },
     error(err) {
       console.error("Image compression failed", err);
@@ -174,7 +211,6 @@ const addProduct = async () => {
   console.log("Product price:", product.value.price); // Log product data
 
   // Save product data to Supabase
-
   await useFetch("/api/prisma/add-product", {
     method: "POST",
     body: {
@@ -185,16 +221,14 @@ const addProduct = async () => {
     },
   });
 
-  //   alert("Product added successfully!");
-  //   // Optionally reset the form or redirect user
-  //   product.value = {
-  //     title: "",
-  //     description: "",
-  //     price: 0,
-  //     imageUrl: "",
-  //   };
-  //   imagePreview.value = null;
-  // }
+  // Reset form after submission
+  product.value = {
+    title: "",
+    description: "",
+    price: 0,
+    imageUrl: "",
+  };
+  imagePreview.value = null;
 };
 </script>
 
