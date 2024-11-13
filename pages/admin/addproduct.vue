@@ -168,31 +168,33 @@ const addProduct = async () => {
 
   console.log("Uploaded Image URL:", imageUrl); // This is where you check the URL
 
-  // Save product data to Supabase
-  const { data: productData, error: productError } = await supabase
-    .from("Products")
-    .insert([
-      {
-        title: product.value.title,
-        description: product.value.description,
-        url: imageUrl, // Save image URL
-        price: product.value.price,
-      },
-    ]);
+  console.log("Product title:", product.value.title); // Log product data
+  console.log("Product description:", product.value.description); // Log product data
+  console.log("Product url:", imageUrl); // Log product data
+  console.log("Product price:", product.value.price); // Log product data
 
-  if (productError) {
-    console.error("Product insertion failed", productError);
-  } else {
-    alert("Product added successfully!");
-    // Optionally reset the form or redirect user
-    product.value = {
-      title: "",
-      description: "",
-      price: 0,
-      imageUrl: "",
-    };
-    imagePreview.value = null;
-  }
+  // Save product data to Supabase
+
+  await useFetch("/api/prisma/add-product", {
+    method: "POST",
+    body: {
+      title: product.value.title,
+      description: product.value.description,
+      url: imageUrl, // Save image URL
+      price: product.value.price,
+    },
+  });
+
+  //   alert("Product added successfully!");
+  //   // Optionally reset the form or redirect user
+  //   product.value = {
+  //     title: "",
+  //     description: "",
+  //     price: 0,
+  //     imageUrl: "",
+  //   };
+  //   imagePreview.value = null;
+  // }
 };
 </script>
 
