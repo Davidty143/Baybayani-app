@@ -84,6 +84,8 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router"; // To redirect after login
+import { useUserStore } from "~/stores/user";
+const userStore = useUserStore();
 
 const router = useRouter();
 const client = useSupabaseClient();
@@ -115,6 +117,7 @@ const login = async () => {
       errorMsg.value = error.message;
       successMsg.value = null;
     } else {
+      userStore.fetchUser();
       successMsg.value = "Successfully logged in!";
       errorMsg.value = null;
 

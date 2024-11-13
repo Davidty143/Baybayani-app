@@ -178,7 +178,7 @@ const searchByName = useDebounce(async () => {
     `/api/prisma/search-by-name/${searchItem.value}`
   );
   isSearching.value = false;
-}, 100);
+}, 500);
 
 watch(
   () => searchItem.value,
