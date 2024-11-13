@@ -112,23 +112,29 @@
                     </NuxtLink>
                   </div>
                 </div>
-
-                <div class="border-b" />
-                <ul class="bg-white">
-                  <li
-                    @click="navigateTo('/orders')"
-                    class="text-[13px] py-2 px-4 w-full hover:bg-gray-200"
-                  >
-                    My Orders
-                  </li>
-                  <li
-                    v-if="user"
-                    @click="signOut"
-                    class="text-[13px] py-2 px-4 w-full hover:bg-gray-200"
-                  >
-                    Sign out
-                  </li>
-                </ul>
+                <div class="relative group">
+                  <div class="border-b" />
+                  <ul class="bg-white">
+                    <li class="text-[15px] text-left font-bold py-2 px- w-full">
+                      <span class="ml-2">
+                        {{ userStore.profile ? userStore.profile.name : "" }}
+                      </span>
+                    </li>
+                    <li
+                      @click="navigateTo('/orders')"
+                      class="text-[13px] py-2 px-4 w-full hover:bg-gray-200"
+                    >
+                      My Orders
+                    </li>
+                    <li
+                      v-if="user"
+                      @click="signOut"
+                      class="text-[13px] py-2 px-4 w-full hover:bg-gray-200"
+                    >
+                      Sign out
+                    </li>
+                  </ul>
+                </div>
               </div>
             </li>
           </ul>
@@ -191,6 +197,8 @@ watch(
 const signOut = async () => {
   await client.auth.signOut(); // Sign the user out using Supabase
   userStore.user = null; // Clear user state in Pinia
+  userStore.profile = null;
+
   window.location.reload(); // Reload the page to reflect the signed-out state
 };
 </script>

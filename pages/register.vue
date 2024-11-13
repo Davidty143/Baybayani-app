@@ -91,7 +91,7 @@
           >
             <option value="" disabled>Select your role</option>
             <option value="User">User</option>
-            <option value="User">Admin</option>
+            <option value="Admin">Admin</option>
           </select>
         </div>
 

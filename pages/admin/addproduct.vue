@@ -61,7 +61,7 @@
             <!-- Price -->
             <div>
               <label for="price" class="block text-sm font-medium text-gray-700"
-                >Price (in cents)</label
+                >Price (₱)</label
               >
               <input
                 v-model="product.price"
