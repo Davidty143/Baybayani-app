@@ -17,7 +17,7 @@
             class="border border-gray-300 shadow-md p-6 rounded-lg text-start"
           >
             <p class="text-lg font-semibold">Total Products</p>
-            <p class="text-3xl font-bold">0</p>
+            <p class="text-3xl font-bold">{{ products.length }}</p>
           </div>
 
           <!-- Displayed Products -->
@@ -26,6 +26,7 @@
           >
             <p class="text-lg font-semibold">Displayed</p>
             <p class="text-3xl font-bold">0</p>
+            <!-- Replace with actual data if available -->
           </div>
 
           <!-- Hidden Products -->
@@ -34,6 +35,7 @@
           >
             <p class="text-lg font-semibold">Hidden</p>
             <p class="text-3xl font-bold">0</p>
+            <!-- Replace with actual data if available -->
           </div>
         </div>
 
@@ -104,9 +106,16 @@
                 <!-- Product ID -->
                 <td class="py-2 px-4 border-b text-center">{{ product.id }}</td>
 
-                <!-- Product Name -->
+                <!-- Product Name and Image -->
                 <td class="py-2 px-4 border-b text-left">
-                  {{ product.title }}
+                  <div class="flex items-center space-x-3">
+                    <img
+                      :src="product.url || 'https://via.placeholder.com/50'"
+                      alt="Product Image"
+                      class="w-20 h-20 object-cover rounded-lg"
+                    />
+                    <span>{{ product.title }}</span>
+                  </div>
                 </td>
 
                 <!-- Price per kg -->
@@ -115,9 +124,7 @@
                 </td>
 
                 <!-- Supplier (Farmer) -->
-                <td class="py-2 px-4 border-b text-left">
-                  {{ product.supplier || "Mock Farmer" }}
-                </td>
+                <td class="py-2 px-4 border-b text-left">Farmer 1</td>
 
                 <!-- Actions (e.g., View button) -->
                 <td class="py-2 px-4 border-b text-start">
@@ -138,28 +145,34 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 import AdminLayout from "~/layouts/AdminLayout.vue";
+const client = useSupabaseClient();
 
 const searchQuery = ref("");
 const products = ref([]); // Holds the list of products fetched from API
-// Fetch products when the component is mounted
-onMounted(async () => {
-  const products = await useFetch("/api/prisma/get-all-products");
-  {
-    console.log("Start Here");
-  }
 
-  console.log("Total  Products: ", products);
-  console.log("Product 1: ", products[0].data.id);
+onMounted(async () => {
+  try {
+    // Call the Supabase RPC function to fetch products
+    const { data, error } = await client.rpc("get_products");
+    if (error) {
+      console.error("Error:", error);
+      return;
+    }
+    console.log("Products:", data);
+    products.value = data; // Store the response in the products ref
+  } catch (error) {
+    console.error("Error fetching products:", error);
+  }
 });
 
 // Computed for filtered products based on the search query
-// const filteredProducts = computed(() => {
-//   return products.value.filter((product) =>
-//     product.title.toLowerCase().includes(searchQuery.value.toLowerCase())
-//   ) ;
-// });
+const filteredProducts = computed(() => {
+  return products.value.filter((product) =>
+    product.title.toLowerCase().includes(searchQuery.value.toLowerCase())
+  );
+});
 
 // Handle view product action
 const viewProduct = (productId) => {
