@@ -17,7 +17,7 @@
             class="border border-gray-300 shadow-md p-6 rounded-lg text-start"
           >
             <p class="text-lg font-semibold">Total Products</p>
-            <p class="text-3xl font-bold">{{ totalProducts }}</p>
+            <p class="text-3xl font-bold">0</p>
           </div>
 
           <!-- Displayed Products -->
@@ -25,7 +25,7 @@
             class="border border-gray-300 shadow-md p-6 rounded-lg text-start"
           >
             <p class="text-lg font-semibold">Displayed</p>
-            <p class="text-3xl font-bold">{{ displayedProducts }}</p>
+            <p class="text-3xl font-bold">0</p>
           </div>
 
           <!-- Hidden Products -->
@@ -33,7 +33,7 @@
             class="border border-gray-300 shadow-md p-6 rounded-lg text-start"
           >
             <p class="text-lg font-semibold">Hidden</p>
-            <p class="text-3xl font-bold">{{ hiddenProducts }}</p>
+            <p class="text-3xl font-bold">0</p>
           </div>
         </div>
 
@@ -102,23 +102,21 @@
             <tbody>
               <tr v-for="product in filteredProducts" :key="product.id">
                 <!-- Product ID -->
-                <td class="py-2 px-4 border-b truncate text-center">
-                  {{ product.id }}
-                </td>
+                <td class="py-2 px-4 border-b text-center">{{ product.id }}</td>
 
                 <!-- Product Name -->
-                <td class="py-2 px-4 border-b text-left truncate">
-                  {{ product.productName }}
+                <td class="py-2 px-4 border-b text-left">
+                  {{ product.title }}
                 </td>
 
                 <!-- Price per kg -->
-                <td class="py-2 px-4 border-b text-left truncate">
-                  ₱{{ product.pricePerKg }}
+                <td class="py-2 px-4 border-b text-left">
+                  ₱{{ product.price }}
                 </td>
 
-                <!-- Supplier -->
+                <!-- Supplier (Farmer) -->
                 <td class="py-2 px-4 border-b text-left">
-                  {{ product.supplier }}
+                  {{ product.supplier || "Mock Farmer" }}
                 </td>
 
                 <!-- Actions (e.g., View button) -->
@@ -140,80 +138,44 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, onMounted } from "vue";
 import AdminLayout from "~/layouts/AdminLayout.vue";
 
-// Sample product data for demonstration purposes
-const products = ref([
-  {
-    id: 1,
-    productName: "Apple",
-    pricePerKg: 3.5,
-    supplier: "Farmer 1",
-    status: "Displayed",
-  },
-  {
-    id: 2,
-    productName: "Banana",
-    pricePerKg: 2.2,
-    supplier: "Farmer 2",
-    status: "Hidden",
-  },
-  {
-    id: 3,
-    productName: "Carrot",
-    pricePerKg: 1.8,
-    supplier: "Farmer 3",
-    status: "Displayed",
-  },
-  {
-    id: 4,
-    productName: "Tomato",
-    pricePerKg: 2.5,
-    supplier: "Farmer 4",
-    status: "Displayed",
-  },
-  {
-    id: 5,
-    productName: "Potato",
-    pricePerKg: 1.2,
-    supplier: "Farmer 5",
-    status: "Hidden",
-  },
-]);
-
-// Stats data (replace with dynamic data if needed)
-const totalProducts = computed(() => products.value.length);
-const displayedProducts = computed(
-  () =>
-    products.value.filter((product) => product.status === "Displayed").length
-);
-const hiddenProducts = computed(
-  () => products.value.filter((product) => product.status === "Hidden").length
-);
-
-// Search functionality
 const searchQuery = ref("");
-const filteredProducts = computed(() => {
-  if (searchQuery.value === "") return products.value;
-  return products.value.filter(
-    (product) =>
-      product.productName
-        .toLowerCase()
-        .includes(searchQuery.value.toLowerCase()) ||
-      product.supplier.toLowerCase().includes(searchQuery.value.toLowerCase())
-  );
+const products = ref([]); // Holds the list of products fetched from API
+// Fetch products when the component is mounted
+onMounted(async () => {
+  const products = await useFetch("/api/prisma/get-all-products");
+  {
+    console.log("Start Here");
+  }
+
+  console.log("Total  Products: ", products);
+  console.log("Product 1: ", products[0].data.id);
 });
 
-// Methods
-const addProduct = () => {
-  // Handle adding a new product (e.g., open a modal or navigate to add product page)
-  alert("Add Product functionality");
+// Computed for filtered products based on the search query
+// const filteredProducts = computed(() => {
+//   return products.value.filter((product) =>
+//     product.title.toLowerCase().includes(searchQuery.value.toLowerCase())
+//   ) ;
+// });
+
+// Handle view product action
+const viewProduct = (productId) => {
+  console.log(`Viewing product with ID: ${productId}`);
+  // Implement the logic to navigate to a product detail page
 };
 
-const viewProduct = (productId) => {
-  // Handle viewing a product (e.g., redirect to a detailed product page or show product details)
-  alert(`Viewing product with ID: ${productId}`);
+// Handle search action (could be triggered by enter key)
+const searchProducts = () => {
+  console.log(`Searching for: ${searchQuery.value}`);
+};
+
+// Add product action (could be triggered by a button)
+const addProduct = () => {
+  console.log("Redirecting to Add Product Page");
+  // Redirect to product add page or open a modal to add a new product
 };
 </script>
 

@@ -86,6 +86,7 @@ import { ref } from "vue";
 import { useRouter } from "vue-router"; // To redirect after login
 import { useUserStore } from "~/stores/user";
 const userStore = useUserStore();
+const user = useSupabaseUser();
 
 const router = useRouter();
 const client = useSupabaseClient();
@@ -94,6 +95,12 @@ const password = ref("");
 const errorMsg = ref(null);
 const successMsg = ref(null);
 const loading = ref(false);
+
+watchEffect(async () => {
+  if (user.value) {
+    await navigateTo("/");
+  }
+});
 
 // Reset error and success messages when user changes input
 const resetMessages = () => {

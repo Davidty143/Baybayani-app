@@ -13,6 +13,10 @@ export const useUserStore = defineStore("user", {
 
   actions: {
     async fetchUser() {
+      if (this.user) {
+        console.log("User already fetched:", this.user.id);
+        return; // Skip fetching if user is already set
+      }
       try {
         const client = useSupabaseClient();
         const { data, error } = await client.auth.getUser();

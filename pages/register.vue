@@ -125,6 +125,14 @@ const password = ref(null);
 const errorMsg = ref(null);
 const successMsg = ref(null);
 
+const user = useSupabaseUser();
+
+watchEffect(async () => {
+  if (!user.value) {
+    await navigateTo("/login");
+  }
+});
+
 const register = async () => {
   try {
     const { error } = await client.auth.signUp({

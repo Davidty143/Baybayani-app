@@ -90,14 +90,13 @@ import { useUserStore } from "~/stores/user";
 const userStore = useUserStore();
 const user = useSupabaseUser();
 
-let selectedArray = ref([]);
-
-onMounted(() => {
+watchEffect(async () => {
   if (!user.value) {
-    return navigateTo("/auth");
+    await navigateTo("/login");
   }
-  setTimeout(() => (userStore.isLoading = false), 200);
 });
+
+let selectedArray = ref([]);
 
 const totalPriceComputed = computed(() => {
   let price = 0;
