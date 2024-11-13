@@ -1,58 +1,53 @@
 <template>
   <AdminLayout>
-    <div class="flex items-center justify-center w-full h-screen">
+    <div class="flex items-center justify-center w-full min-h-screen px-4 py-6">
       <div
         id="ManageProduct"
-        class="w-full h-[100vh] max-w-[1200px] bg-[#fafafa] p-6 rounded-lg"
+        class="w-full max-w-[1200px] bg-[#fafafa] p-6 rounded-lg"
       >
         <!-- Title -->
-        <h1 class="text-2xl font-semibold text-start mb-6">
+        <h1 class="text-xl sm:text-2xl font-semibold text-start mb-6">
           Product Management
         </h1>
 
         <!-- Product Stats Boxes -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2 mb-6">
-          <!-- Total Products -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
           <div
-            class="border border-gray-300 shadow-md p-6 rounded-lg text-start"
+            class="border border-gray-300 shadow-md p-4 sm:p-6 rounded-lg text-start"
           >
-            <p class="text-lg font-semibold">Total Products</p>
-            <p class="text-3xl font-bold">{{ products.length }}</p>
+            <p class="text-sm sm:text-lg font-semibold">Total Products</p>
+            <p class="text-2xl sm:text-3xl font-bold">{{ products.length }}</p>
           </div>
-
-          <!-- Displayed Products -->
           <div
-            class="border border-gray-300 shadow-md p-6 rounded-lg text-start"
+            class="border border-gray-300 shadow-md p-4 sm:p-6 rounded-lg text-start"
           >
-            <p class="text-lg font-semibold">Displayed</p>
-            <p class="text-3xl font-bold">0</p>
-            <!-- Replace with actual data if available -->
+            <p class="text-sm sm:text-lg font-semibold">Displayed</p>
+            <p class="text-2xl sm:text-3xl font-bold">0</p>
           </div>
-
-          <!-- Hidden Products -->
           <div
-            class="border border-gray-300 shadow-md p-6 rounded-lg text-start"
+            class="border border-gray-300 shadow-md p-4 sm:p-6 rounded-lg text-start"
           >
-            <p class="text-lg font-semibold">Hidden</p>
-            <p class="text-3xl font-bold">0</p>
-            <!-- Replace with actual data if available -->
+            <p class="text-sm sm:text-lg font-semibold">Hidden</p>
+            <p class="text-2xl sm:text-3xl font-bold">0</p>
           </div>
         </div>
 
-        <h1 class="text-2xl font-semibold text-start pt-5">Product Catalog</h1>
+        <h1 class="text-xl sm:text-2xl font-semibold text-start pt-5">
+          Product Catalog
+        </h1>
 
         <!-- Search Container -->
-        <div class="flex justify-between w-full max-w-[1200px] py-6">
-          <!-- Search Input with Icon -->
-          <div class="relative w-[350px]">
+        <div
+          class="flex flex-col sm:flex-row sm:justify-between w-full max-w-[1200px] py-6 space-y-4 sm:space-y-0"
+        >
+          <div class="relative w-full sm:w-[350px]">
             <input
               v-model="searchQuery"
               @keydown.enter="searchProducts"
               type="text"
               placeholder="Search Products"
-              class="w-full p-3 border border-gray-300 rounded-lg pl- focus:outline-none focus:ring-1 focus:ring-[#0C6539]"
+              class="w-full p-2 sm:p-3 border border-gray-300 rounded-lg pl-10 focus:outline-none focus:ring-1 focus:ring-[#0C6539] text-sm sm:text-base"
             />
-            <!-- Search Icon -->
             <Icon
               name="ph:magnifying-glass"
               size="20"
@@ -63,12 +58,9 @@
           <!-- Add Product Button -->
           <button
             @click="addProduct"
-            class="px-12 py-3 font-semibold border border-[#0C6539] text-[#0C6539] rounded-lg hover:bg-[#0C6539] hover:text-[#fafafa] flex items-center space-x-3 group"
+            class="px-8 sm:px-12 py-2 pl-10 sm:py-3 font-semibold flex justify-between border border-[#0C6539] text-[#0C6539] rounded-lg hover:bg-[#0C6539] hover:text-[#fafafa] flex items-center space-x-3 group text-sm sm:text-base"
           >
-            <!-- Text -->
             <span>Add Product</span>
-
-            <!-- Icon -->
             <Icon
               name="ph:plus-bold"
               size="18"
@@ -79,58 +71,55 @@
 
         <!-- Product Table -->
         <div
-          class="overflow-x-auto bg-[#ffffff] border border-gray-300 rounded-md shadow-sm text-lg"
+          class="overflow-x-auto bg-[#ffffff] border border-gray-300 rounded-md shadow-sm text-sm sm:text-base"
         >
-          <table class="w-full table-auto">
+          <table class="w-full sm:table-auto lg:table-fixed min-w-[600px]">
             <thead>
               <tr>
-                <th class="py-2 px-4 border-b bg-gray-200 text-center">
+                <th class="py-4 px-6 sm:px-8 border-b bg-gray-200 text-center">
                   Product ID
                 </th>
-                <th class="py-2 px-4 border-b bg-gray-200 text-left">
+                <th
+                  class="py-4 px-6 sm:px-8 border-b bg-gray-200 sm:text-center lg:text-left"
+                >
                   Product
                 </th>
-                <th class="py-2 px-4 border-b bg-gray-200 text-left">
+                <th class="py-4 px-6 sm:px-8 border-b bg-gray-200 text-left">
                   Price per kg
                 </th>
-                <th class="py-2 px-4 border-b bg-gray-200 text-left">
+                <th class="py-4 px-6 sm:px-8 border-b bg-gray-200 text-left">
                   Supplier/Farmer
                 </th>
-                <th class="py-2 px-4 border-b bg-gray-200 text-start">
+                <th class="py-4 px-6 sm:px-8 border-b bg-gray-200 text-start">
                   Action
                 </th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="product in filteredProducts" :key="product.id">
-                <!-- Product ID -->
-                <td class="py-2 px-4 border-b text-center">{{ product.id }}</td>
-
-                <!-- Product Name and Image -->
-                <td class="py-2 px-4 border-b text-left">
-                  <div class="flex items-center space-x-3">
+                <td class="py-4 px-6 sm:px-8 border-b text-center">
+                  {{ product.id }}
+                </td>
+                <td class="py-4 px-6 sm:px-8 border-b text-left">
+                  <div class="flex items-center space-x-4 sm:space-x-6">
                     <img
                       :src="product.url || 'https://via.placeholder.com/50'"
                       alt="Product Image"
-                      class="w-20 h-20 object-cover rounded-lg"
+                      class="w-12 h-12 sm:w-16 sm:h-16 object-cover rounded-lg"
                     />
-                    <span>{{ product.title }}</span>
+                    <span class="text-sm sm:text-base">{{
+                      product.title
+                    }}</span>
                   </div>
                 </td>
-
-                <!-- Price per kg -->
-                <td class="py-2 px-4 border-b text-left">
+                <td class="py-4 px-6 sm:px-8 border-b text-left">
                   ₱{{ product.price }}
                 </td>
-
-                <!-- Supplier (Farmer) -->
-                <td class="py-2 px-4 border-b text-left">Farmer 1</td>
-
-                <!-- Actions (e.g., View button) -->
-                <td class="py-2 px-4 border-b text-start">
+                <td class="py-4 px-6 sm:px-8 border-b text-left">Farmer 1</td>
+                <td class="py-4 px-6 sm:px-8 border-b text-start">
                   <button
                     @click="viewProduct(product.id)"
-                    class="text-[#0C6539] hover:underline"
+                    class="text-[#0C6539] hover:underline text-xs sm:text-sm"
                   >
                     View
                   </button>
@@ -193,5 +182,70 @@ const addProduct = () => {
 </script>
 
 <style scoped>
-/* Add any additional styles if needed */
+/* Mobile-first approach with media queries for larger screens */
+@media (max-width: 640px) {
+  table {
+    min-width: 500px;
+  }
+
+  th,
+  td {
+    font-size: 12px; /* Smaller font size on mobile */
+    padding: 12px 8px; /* Slightly larger padding */
+  }
+
+  .w-12,
+  .h-12 {
+    width: 50px;
+    height: 50px;
+  }
+
+  .text-xs {
+    font-size: 12px;
+  }
+
+  .text-sm {
+    font-size: 14px;
+  }
+
+  .text-base {
+    font-size: 16px;
+  }
+}
+
+@media (min-width: 640px) {
+  th,
+  td {
+    font-size: 14px;
+    padding: 14px 10px; /* Larger padding on tablets and up */
+  }
+
+  .w-16,
+  .h-16 {
+    width: 60px;
+    height: 60px;
+  }
+
+  .text-sm {
+    font-size: 14px;
+  }
+
+  .text-base {
+    font-size: 16px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .text-xl {
+    font-size: 1.25rem;
+  }
+
+  .text-2xl {
+    font-size: 1.5rem;
+  }
+
+  .text-3xl {
+    font-size: 1.875rem;
+  }
+}
 </style>
