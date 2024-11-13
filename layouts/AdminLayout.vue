@@ -89,7 +89,7 @@
                 size="32"
                 class="text-[#0C6539] group-hover:text-[#FF4646]"
               />
-              <span class="ml-2">Admin</span>
+              <span class="ml-2">Account</span>
               <!-- Add margin-left to space the text from the icon -->
 
               <Icon name="mdi:chevron-down" size="15" class="ml-5" />
@@ -123,7 +123,7 @@
                   </li>
                   <li
                     v-if="user"
-                    @click="client.auth.signOut()"
+                    @click="signOut"
                     class="text-[13px] py-2 px-4 w-full hover:bg-gray-200"
                   >
                     Sign out
@@ -155,6 +155,7 @@
 <script setup>
 import { useUserStore } from "~/stores/user";
 const userStore = useUserStore();
+await userStore.fetchUser();
 
 const client = useSupabaseClient();
 const user = useSupabaseUser();
@@ -186,4 +187,10 @@ watch(
     searchByName();
   }
 );
+
+const signOut = async () => {
+  await client.auth.signOut(); // Sign the user out using Supabase
+  userStore.user = null; // Clear user state in Pinia
+  window.location.reload(); // Reload the page to reflect the signed-out state
+};
 </script>

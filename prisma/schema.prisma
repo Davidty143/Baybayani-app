@@ -8,23 +8,15 @@ datasource db {
 }
 
 model User {
-  id            String   @id @unique @db.Uuid
-  email         String?  @unique
-  name          String
-  contactNumber String
-  created_at    DateTime? @default(now()) @db.Timestamptz(6)
-  orders        Orders[]  // One-to-many relation to Orders
-}
-
-
-model Profile {
   id              String   @id @unique @db.Uuid
   email           String?  @unique    
   contact         String?
   name            String?
   role            String?
   created_at      DateTime? @default(now()) @db.Timestamptz(6)
+  orders        Orders[]  // One-to-many relation to Orders
 }
+
 
 enum Status {
   ACTIVE

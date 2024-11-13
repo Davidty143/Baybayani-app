@@ -120,4 +120,8 @@ const images = ref([
 const addToCart = () => {
   userStore.cart.push(product.value.data);
 };
+
+onMounted(() => {
+  setTimeout(() => (userStore.isLoading = false), 200);
+});
 </script>
