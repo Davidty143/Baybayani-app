@@ -2,7 +2,7 @@
   <div id="AdminLayout" class="w-full fixed z-50">
     <div
       id="MainHeader"
-      class="flex items-center w-full bg-[#fafafa] shadow-[0px_1px_6px_4px_rgba(0,_0,_0,_0.25)]"
+      class="flex items-center w-full bg-[#fafafa] shadow-[0px_1px_5px_3px_rgba(0,_0,_0,_0.25)]"
     >
       <div
         class="flex lg:justify-start justify-between gap-10 max-w-[1150px] w-full px-3 py-5 mx-auto"

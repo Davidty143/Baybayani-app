@@ -3,7 +3,7 @@
     <div class="flex items-center justify-center w-full h-screen">
       <div
         id="ManageProduct"
-        class="w-full h-[100vh] max-w-[1200px] bg-[#fafafa] p-6 rounded-lg"
+        class="w-full h-[120vh] max-w-[1200px] bg-[#fafafa] p-6 rounded-lg"
       >
         <!-- Title -->
         <h1 class="text-2xl font-semibold text-start mb-6">Add Product</h1>
