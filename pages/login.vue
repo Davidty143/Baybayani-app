@@ -114,20 +114,24 @@ const login = async () => {
   errorMsg.value = null;
   successMsg.value = null;
 
-  try {
-    const { error } = await client.auth.signInWithPassword({
+  
+    try {
+    const response = await client.auth.signInWithPassword({
       email: email.value,
       password: password.value,
     });
-
+    console.log("info", response);
+    const userData = response.data.user.user_metadata.role
+    console.log(userData);
+    const { error } = response;
+    // ...
     if (error) {
       errorMsg.value = error.message;
       successMsg.value = null;
     } else {
       userStore.fetchUser();
-      successMsg.value = "Successfully logged in!";
+      successMsg.value = "Successfully logged in as " + userData.toLowerCase() + "!";
       errorMsg.value = null;
-
       // Redirect user to the homepage or dashboard after successful login
       router.push("/"); // You can change this to any route you want
     }
