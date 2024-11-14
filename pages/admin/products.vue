@@ -141,27 +141,27 @@ const client = useSupabaseClient();
 const searchQuery = ref("");
 const products = ref([]); // Holds the list of products fetched from API
 
-// onMounted(async () => {
-//   try {
-//     // Call the Supabase RPC function to fetch products
-//     const { data, error } = await client.rpc("get_products");
-//     if (error) {
-//       console.error("Error:", error);
-//       return;
-//     }
-//     console.log("Products:", data);
-//     products.value = data; // Store the response in the products ref
-//   } catch (error) {
-//     console.error("Error fetching products:", error);
-//   }
-// });
+onMounted(async () => {
+  try {
+    // Call the Supabase RPC function to fetch products
+    const { data, error } = await client.rpc("get_products");
+    if (error) {
+      console.error("Error:", error);
+      return;
+    }
+    console.log("Products:", data);
+    products.value = data; // Store the response in the products ref
+  } catch (error) {
+    console.error("Error fetching products:", error);
+  }
+});
 
-// // Computed for filtered products based on the search query
-// const filteredProducts = computed(() => {
-//   return products.value.filter((product) =>
-//     product.title.toLowerCase().includes(searchQuery.value.toLowerCase())
-//   );
-// });
+// Computed for filtered products based on the search query
+const filteredProducts = computed(() => {
+  return products.value.filter((product) =>
+    product.title.toLowerCase().includes(searchQuery.value.toLowerCase())
+  );
+});
 
 // Handle view product action
 const viewProduct = (productId) => {
