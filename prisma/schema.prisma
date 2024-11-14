@@ -72,7 +72,16 @@ model Products {
   price       Int
   created_at  DateTime?   @default(now()) @db.Timestamptz(6)
   orderItem   OrderItem[] // One-to-many relation to OrderItem
+  farmer     Farmer[]   @relation("FarmerProducts")
   CartItem    CartItem[]
+}
+
+model Farmer {
+  id          Int     @id @default(autoincrement())
+  name        String
+  contact     String?
+  products    Products[]  @relation("FarmerProducts")
+  created_at  DateTime?  @default(now()) @db.Timestamptz(6)
 }
 
 enum Status {

@@ -91,6 +91,56 @@
               </div>
             </div>
 
+            <!-- Searchable and Foldable Farmers List -->
+            <div>
+              <label
+                for="farmers"
+                class="block text-sm font-medium text-gray-700"
+              >
+                Select Farmers
+              </label>
+
+              <!-- Search Input -->
+              <input
+                v-model="searchQuery"
+                type="text"
+                class="w-full mt-2 p-3 border border-gray-300 rounded-md"
+                placeholder="Search farmers..."
+              />
+
+              <!-- Toggle Button -->
+              <button
+                type="button"
+                @click="toggleFarmersList"
+                class="mt-2 text-blue-600 hover:text-blue-700"
+              >
+                {{ isFarmersListVisible ? "Hide Farmers" : "Show Farmers" }}
+              </button>
+
+              <!-- Farmers List (Checkboxes) -->
+              <div
+                v-if="isFarmersListVisible"
+                class="mt-4 max-h-60 overflow-y-auto"
+              >
+                <div
+                  v-for="farmer in filteredFarmers"
+                  :key="farmer.id"
+                  class="flex items-center mb-2"
+                >
+                  <input
+                    type="checkbox"
+                    :id="'farmer-' + farmer.id"
+                    :value="farmer.id"
+                    v-model="selectedFarmers"
+                    class="mr-2"
+                  />
+                  <label :for="'farmer-' + farmer.id" class="text-sm">
+                    {{ farmer.name }}
+                  </label>
+                </div>
+              </div>
+            </div>
+
             <!-- Submit Button -->
             <div class="mt-6 text-right">
               <button
@@ -108,10 +158,25 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onBeforeMount, computed } from "vue";
 import AdminLayout from "~/layouts/AdminLayout.vue";
 import Compressor from "compressorjs"; // Import Compressor.js
 const supabase = useSupabaseClient();
+
+// Define product form data
+const product = ref({
+  title: "",
+  description: "",
+  price: 0,
+  imageUrl: "",
+});
+
+const imagePreview = ref(null); // For image preview
+const compressedImage = ref(null); // For the compressed image file
+const farmers = ref([]); // List of farmers fetched from the backend
+const selectedFarmers = ref([]); // Array to hold selected farmers' IDs
+const searchQuery = ref(""); // For search input
+const isFarmersListVisible = ref(false); // For toggling visibility of the farmers list
 
 // Function to generate a public URL for an asset in a public bucket
 function getPublicUrl(bucketName, filePath) {
@@ -119,16 +184,30 @@ function getPublicUrl(bucketName, filePath) {
   return `${supabaseUrl}/storage/v1/object/public/${bucketName}/${filePath}`;
 }
 
-// Define product form data
-const product = ref({
-  title: "",
-  description: "",
-  price: 0,
-  imageUrl: "", // Optional for image URL after upload
+// Fetch farmers from the API before the component is mounted
+onBeforeMount(async () => {
+  const response = await fetch("/api/prisma/get-all-farmers");
+  const result = await response.json();
+
+  if (response.ok) {
+    farmers.value = result; // Populate the farmers list
+  } else {
+    console.error("Failed to fetch farmers");
+  }
 });
 
-const imagePreview = ref(null); // For image preview
-const compressedImage = ref(null); // For the compressed image file
+// Computed property to filter farmers based on search query
+const filteredFarmers = computed(() => {
+  if (!searchQuery.value) return farmers.value;
+  return farmers.value.filter((farmer) =>
+    farmer.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+  );
+});
+
+// Toggle visibility of the farmers list
+const toggleFarmersList = () => {
+  isFarmersListVisible.value = !isFarmersListVisible.value;
+};
 
 // Handle file change and compress the image
 const handleFileChange = (event) => {
@@ -168,7 +247,7 @@ const handleFileChange = (event) => {
           },
           "image/jpeg",
           0.8
-        ); // Compress the image further if necessary
+        );
       };
       img.src = URL.createObjectURL(result); // Load the compressed image into the img element
     },
@@ -205,12 +284,7 @@ const addProduct = async () => {
 
   console.log("Uploaded Image URL:", imageUrl); // This is where you check the URL
 
-  console.log("Product title:", product.value.title); // Log product data
-  console.log("Product description:", product.value.description); // Log product data
-  console.log("Product url:", imageUrl); // Log product data
-  console.log("Product price:", product.value.price); // Log product data
-
-  // Save product data to Supabase
+  // Save product data to Supabase, including selected farmers
   await useFetch("/api/prisma/add-product", {
     method: "POST",
     body: {
@@ -218,6 +292,7 @@ const addProduct = async () => {
       description: product.value.description,
       url: imageUrl, // Save image URL
       price: product.value.price,
+      farmerIds: selectedFarmers.value, // Include selected farmer IDs
     },
   });
 
@@ -228,6 +303,7 @@ const addProduct = async () => {
     price: 0,
     imageUrl: "",
   };
+  selectedFarmers.value = [];
   imagePreview.value = null;
 };
 </script>
