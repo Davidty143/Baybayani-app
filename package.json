@@ -6,8 +6,8 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare && prisma generate",
-    "vercel-build": "prisma generate && prisma migrate deploy && nuxt build"
+    "postinstall": "nuxt prepare",
+    "vercel-build": "prisma generate && prisma migrate deploy"
   },
   "prisma": {
     "seed": "node prisma/seed.js"
