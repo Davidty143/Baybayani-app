@@ -75,6 +75,7 @@
             v-model="contact"
             class="mt-1 w-full p-3 border border-gray-300 rounded-md"
             placeholder="Enter your contact number"
+            patter="[0-9]"
             required
           />
         </div>
@@ -91,6 +92,7 @@
           >
             <option value="" disabled>Select your role</option>
             <option value="User">User</option>
+            <option value="Admin">Buyer</option>
             <option value="Admin">Admin</option>
           </select>
         </div>
@@ -134,6 +136,7 @@ watchEffect(async () => {
 });
 
 const register = async () => {
+  await nextTick();
   try {
     const { error } = await client.auth.signUp({
       email: email.value,

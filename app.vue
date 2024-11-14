@@ -15,6 +15,14 @@ import { useUserStore } from '~/stores/user';
 const userStore = useUserStore()
 
 const route = useRoute()
+// if (userStore.user.role === 'Admin') {
+//   console.log('User is an Admin');
+// } else if (userStore.user.role === 'User') {
+//   console.log('User is a regular user');
+// } else {
+//   console.log('User has an unknown role');
+// }
+
 
 let windowWidth = ref(process.client ? window.innerWidth : '')
 
