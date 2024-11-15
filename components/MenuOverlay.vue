@@ -101,24 +101,33 @@
 
 <script setup>
 import { useUserStore } from '~/stores/user';
-const userStore = useUserStore()
+import { onMounted } from 'vue';  // Import onMounted hook
 
-const client = useSupabaseClient()
-const user = useSupabaseUser()
+const userStore = useUserStore();
+
+
+const client = useSupabaseClient();
+const user = useSupabaseUser();
+
+
+onMounted(() => {
+  userStore.fetchUser(); 
+});
+
 
 const goTo = (url) => {
-    userStore.isMenuOverlay = false
-    return navigateTo(`/${url}`)
-}
+  userStore.isMenuOverlay = false;  
+  navigateTo(`/${url}`);
+};
 
 const signOut = () => {
-    client.auth.signOut()
-    userStore.isMenuOverlay = false
-    return navigateTo('/')
-}
+  client.auth.signOut();  
+  userStore.isMenuOverlay = false;  
+  return navigateTo('/');  
+};
 
 const signIn = () => {
-    userStore.isMenuOverlay = false
-    return navigateTo('/auth')
-}
+  userStore.isMenuOverlay = false;  
+  return navigateTo('/auth'); 
+};
 </script>
