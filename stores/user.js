@@ -13,13 +13,6 @@ export const useUserStore = defineStore("user", {
 
   actions: {
     async fetchUser() {
-      console.log('fetchUser action called');
-
-
-
-      if (this.user) {
-        return; // Skip fetching if user is already set
-      }
       this.isLoading = true; // Start loading
 
       try {
@@ -37,9 +30,11 @@ export const useUserStore = defineStore("user", {
       } catch (err) {
         console.error("Unexpected error fetching user:", err);
       } finally {
+        console.log("Setting isLoading to false");
         this.isLoading = false; 
       }
-    },
+      console.log("UserStore State after fetching:", JSON.stringify(this.$state, null, 2));    
+      },
 
 
     logout() {

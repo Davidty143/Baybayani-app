@@ -11,7 +11,7 @@
           <span class="pl-4">Order Successful</span>
         </div>
         <p class="text-sm pl-[50px]">
-          Thank you! We are preparring your order.
+          Thank you! We are preparing your order.
         </p>
       </div>
     </div>
@@ -20,6 +20,8 @@
 
 <script setup>
 import MainLayout from "~/layouts/MainLayout.vue";
+import { useUserStore } from "~/stores/user";
+const userStore = useUserStore();
 const user = useSupabaseUser();
 
 watchEffect(async () => {
@@ -29,6 +31,17 @@ watchEffect(async () => {
 });
 
 onMounted(() => {
+  refreshPageOnce();
+  userStore.fetchUser(); 
   setTimeout(() => (userStore.isLoading = false), 300);
 });
+
+const refreshPageOnce = () => {
+  if (sessionStorage.getItem("pageRefreshed") !== "true") {
+    sessionStorage.setItem("pageRefreshed", "true"); 
+    setTimeout(() => {
+      location.reload();
+    }, 500); 
+  }
+};
 </script>

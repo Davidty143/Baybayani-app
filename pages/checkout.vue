@@ -85,18 +85,29 @@ watchEffect(() => {
 });
 
 onMounted(() => {
+  userStore.fetchUser();
   userStore.checkout.forEach((item) => {
     total.value += item.price;
   });
+
+  refreshPageOnce();
 });
 
+const refreshPageOnce = () => {
+  if (!sessionStorage.getItem("pageRefreshed")) {
+    sessionStorage.setItem("pageRefreshed", "true"); 
+    setTimeout(() => {
+      location.reload(); 
+    }, 500);
+  }
+};
+
 const placeOrder = async () => {
-  // Create order without delivery address and Stripe payment
   await createOrder();
   userStore.cart = [];
   userStore.checkout = [];
   setTimeout(() => {
-    return navigateTo("/success");
+    return navigateTo("/success"); 
   }, 500);
 };
 

@@ -103,36 +103,43 @@ const totalPriceComputed = computed(() => {
   userStore.cart.forEach((prod) => {
     price += prod.price;
   });
-  return price / 100;
+  return price / 100; 
 });
 
 const selectedRadioFunc = (e) => {
-  if (!selectedArray.value.length) {
-    selectedArray.value.push(e);
-    return;
+  const index = selectedArray.value.findIndex(item => item.id === e.id);
+  if (index === -1) {
+    selectedArray.value.push(e); 
+  } else {
+    selectedArray.value.splice(index, 1); 
   }
+};
 
-  selectedArray.value.forEach((item, index) => {
-    if (e.id != item.id) {
-      selectedArray.value.push(e);
-    } else {
-      selectedArray.value.splice(index, 1);
-    }
-  });
+const refreshPage = () => {
+  if (!sessionStorage.getItem('hasRefreshed')) {
+    setTimeout(() => {
+      location.reload(); 
+    }, 1000); 
+    sessionStorage.setItem('hasRefreshed', 'true');
+  }
 };
 
 const goToCheckout = () => {
   let ids = [];
-  userStore.checkout = [];
+  userStore.checkout = []; 
+  userStore.checkout = [...userStore.cart];
 
   selectedArray.value.forEach((item) => ids.push(item.id));
-
-  let res = userStore.cart.filter((item) => {
-    return ids.indexOf(item.id) != -1;
-  });
+  let res = userStore.cart.filter((item) => ids.includes(item.id));
 
   res.forEach((item) => userStore.checkout.push(toRaw(item)));
 
-  return navigateTo("/checkout");
+  return navigateTo("/checkout"); 
 };
+
+onMounted(() => {
+  refreshPage(); 
+  userStore.fetchUser(); 
+});
 </script>
+
