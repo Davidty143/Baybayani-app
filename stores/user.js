@@ -6,6 +6,7 @@ export const useUserStore = defineStore("user", {
     isMenuOverlay: false,
     isLoading: false,
     cart: [],
+    cartItems: [],
     checkout: [],
     user: null, // auth info
     profile: null, // profile info

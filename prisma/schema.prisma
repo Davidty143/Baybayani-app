@@ -33,10 +33,10 @@ model CartItem {
   id         Int       @id @default(autoincrement())
   cartId     String    @db.Uuid // Foreign key pointing to Cart's `id`
   productId  Int
-  quantity   Int       @default(1) // Quantity of the product in the cart
+  quantity   Int       @default(0) // Quantity of the product in the cart
   created_at DateTime? @default(now()) @db.Timestamptz(6)
 
-  // Relations to Cart and Products models
+  // Relations to Cart and Products models  
   cart    Cart     @relation(fields: [cartId], references: [id])
   product Products @relation(fields: [productId], references: [id])
 }

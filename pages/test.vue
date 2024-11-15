@@ -1,189 +1,136 @@
 <template>
-  <div class="max-w-lg mx-auto p-6">
-    <h1 class="text-2xl font-semibold text-center mb-6">Create Farmer</h1>
+  <div class="max-w-4xl mx-auto p-4">
+    <h2 class="text-2xl font-semibold mb-4">Your Cart</h2>
 
-    <!-- Farmer Form -->
-    <form @submit.prevent="submitForm" class="space-y-6">
-      <!-- Farmer Name -->
-      <div class="form-group">
-        <label for="name" class="block text-lg font-medium">Farmer Name</label>
-        <input
-          type="text"
-          v-model="farmer.name"
-          id="name"
-          required
-          class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-      </div>
-
-      <!-- Contact -->
-      <div class="form-group">
-        <label for="contact" class="block text-lg font-medium">Contact</label>
-        <input
-          type="text"
-          v-model="farmer.contact"
-          id="contact"
-          class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-      </div>
-
-      <!-- Product Selection (Checkboxes) -->
-      <div class="form-group">
-        <label class="block text-lg font-medium">Select Products</label>
-
-        <!-- Search Bar -->
-        <input
-          type="text"
-          v-model="searchQuery"
-          placeholder="Search products"
-          class="w-full mb-4 px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-
-        <!-- Product List -->
-        <div>
-          <button
-            type="button"
-            @click="toggleCollapse"
-            class="text-blue-500 hover:underline mb-2"
-          >
-            {{ collapsed ? "Show" : "Hide" }} Products
-          </button>
-
-          <div v-show="!collapsed">
-            <div
-              v-for="product in filteredProducts"
-              :key="product.id"
-              class="flex items-center space-x-2"
-            >
-              <input
-                type="checkbox"
-                :id="'product-' + product.id"
-                :value="product.id"
-                v-model="selectedProducts"
-                class="h-4 w-4 border-gray-300 text-blue-600 focus:ring-blue-500"
-              />
-              <label :for="'product-' + product.id" class="text-lg">{{
-                product.title
-              }}</label>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Submit Button -->
-      <div class="flex justify-center">
-        <button
-          type="submit"
-          class="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300"
-        >
-          Create Farmer
-        </button>
-      </div>
-    </form>
-
-    <!-- Error and Success Messages -->
-    <div v-if="errorMessage" class="mt-4 text-red-600 text-center">
-      {{ errorMessage }}
+    <!-- Add to Cart Button -->
+    <div class="mt-4">
+      <button
+        @click="addToCart"
+        class="bg-green-600 text-white py-2 px-6 rounded-lg shadow-md hover:bg-green-700"
+      >
+        Add Product to Cart
+      </button>
     </div>
-    <div v-if="successMessage" class="mt-4 text-green-600 text-center">
-      {{ successMessage }}
+
+    <!-- Loading State -->
+    <div v-if="isLoading" class="text-center text-gray-500">
+      Loading your cart...
+    </div>
+
+    <!-- Success Message -->
+    <div v-if="isSuccess" class="text-center text-green-500">
+      Product added to cart successfully!
+    </div>
+
+    <!-- Error Message -->
+    <div v-if="isError" class="text-center text-red-500">
+      Error adding product to cart. Please try again.
+    </div>
+
+    <!-- Cart Details -->
+    <div v-if="cart && !isLoading">
+      <!-- Check if there are any items in the cart -->
+      <div v-if="cart.cartItems && cart.cartItems.length > 0">
+        <ul>
+          <li
+            v-for="item in cart.cartItems"
+            :key="item.id"
+            class="p-4 border-b"
+          >
+            <p class="font-bold">{{ item.product.title }}</p>
+            <p class="text-gray-500">₱{{ item.product.price }}</p>
+            <p class="text-gray-500">Quantity: {{ item.quantity }}</p>
+          </li>
+        </ul>
+      </div>
+      <div v-else>
+        <p class="text-gray-500">Your cart is empty.</p>
+      </div>
     </div>
   </div>
 </template>
 
-<script>
-import { ref, onBeforeMount, computed } from "vue";
+<script setup>
+import { ref } from "vue";
+import { useUserStore } from "~/stores/user";
 
-export default {
-  setup() {
-    const farmer = ref({
-      name: "",
-      contact: "",
-    });
+const userStore = useUserStore();
+const cart = ref(null);
+const isLoading = ref(false);
+const isSuccess = ref(false);
+const isError = ref(false);
 
-    const selectedProducts = ref([]); // Array for holding selected product IDs
-    const products = ref([]);
-    const successMessage = ref("");
-    const errorMessage = ref("");
-    const searchQuery = ref("");
-    const collapsed = ref(true); // Tracks whether the product list is collapsed or expanded
+const userId = userStore.user?.id; // Get user ID from the store
 
-    // Fetch products from the API when the component is mounted
-    onBeforeMount(async () => {
-      try {
-        const response = await fetch("/api/prisma/get-all-products");
-        const result = await response.json();
+// Fetch user's cart data
+const fetchCart = async () => {
+  if (!userId) return;
 
-        if (response.ok) {
-          products.value = result; // Populate the products list
-        } else {
-          throw new Error("Failed to fetch products");
-        }
-      } catch (error) {
-        errorMessage.value = "Error fetching products: " + error.message;
-      }
-    });
-
-    // Computed property to filter products based on the search query
-    const filteredProducts = computed(() => {
-      if (!searchQuery.value) {
-        return products.value;
-      }
-      return products.value.filter((product) =>
-        product.title.toLowerCase().includes(searchQuery.value.toLowerCase())
-      );
-    });
-
-    // Toggle collapse state for the product list
-    const toggleCollapse = () => {
-      collapsed.value = !collapsed.value;
-    };
-
-    const submitForm = async () => {
-      const newFarmer = {
-        name: farmer.value.name,
-        contact: farmer.value.contact,
-        productIds: selectedProducts.value, // Array of selected product IDs
-      };
-
-      try {
-        const response = await fetch("/api/prisma/add-farmer", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(newFarmer),
-        });
-
-        const result = await response.json();
-
-        if (response.ok) {
-          successMessage.value = "Farmer created successfully!";
-          errorMessage.value = "";
-          // Reset the form
-          farmer.value = { name: "", contact: "" };
-          selectedProducts.value = [];
-        } else {
-          throw new Error(result.error || "Failed to create farmer");
-        }
-      } catch (error) {
-        errorMessage.value = "Error: " + error.message;
-        successMessage.value = "";
-      }
-    };
-
-    return {
-      farmer,
-      selectedProducts,
-      products,
-      successMessage,
-      errorMessage,
-      submitForm,
-      searchQuery,
-      collapsed,
-      toggleCollapse,
-      filteredProducts,
-    };
-  },
+  isLoading.value = true;
+  try {
+    const { data } = await useFetch(`/api/prisma/get-cart-by-user/${userId}`);
+    if (data) {
+      cart.value = data; // Set the cart data if found
+      console.log(cart.value + "mao ni");
+    } else {
+      console.error("No cart found for this user");
+    }
+  } catch (error) {
+    console.error("Error fetching cart:", error);
+  } finally {
+    isLoading.value = false;
+  }
 };
+
+// Add a product to the cart
+const addToCart = async () => {
+  if (!userId) {
+    console.error("User is not logged in");
+    isError.value = true;
+    return;
+  }
+
+  const productId = 10; // Example product ID (replace with actual product ID logic)
+
+  isLoading.value = true;
+  isSuccess.value = false;
+  isError.value = false;
+
+  console.log("User ID:", userId); // Log the user ID to verify it
+
+  try {
+    const { data } = await useFetch(
+      `/api/prisma/add-product-to-cart/${userId}`,
+      {
+        method: "POST",
+        body: { productId },
+      }
+    );
+
+    if (data?.success) {
+      console.log("Product added to cart successfully!");
+      await fetchCart(); // Fetch the updated cart
+      isSuccess.value = true;
+    } else {
+      console.error("Error: mali ni");
+      isError.value = true;
+    }
+  } catch (error) {
+    console.error("gagaga:", error);
+    isError.value = true;
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+// Fetch the cart initially when the component is mounted
+if (userId) {
+  fetchCart();
+} else {
+  console.error("No user ID found, cannot fetch cart.");
+}
 </script>
+
+<style scoped>
+/* You can add custom styles here if needed, but Tailwind should be enough */
+</style>
