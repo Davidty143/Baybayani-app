@@ -196,10 +196,12 @@ watch(
 );
 
 const signOut = async () => {
-  await client.auth.signOut(); // Sign the user out using Supabase
-  userStore.user = null; // Clear user state in Pinia
-  userStore.profile = null;
+  userStore.logout();
 
-  window.location.reload(); // Reload the page to reflect the signed-out state
+  // await client.auth.signOut(); // Sign the user out using Supabase
+  // userStore.user = null; // Clear user state in Pinia
+  // userStore.profile = null;
+
+  // window.location.reload(); // Reload the page to reflect the signed-out state
 };
 </script>

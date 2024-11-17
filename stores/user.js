@@ -43,7 +43,10 @@ export const useUserStore = defineStore("user", {
       this.user = null;
       this.profile = null;
       this.cartItems = []; // Clear cart items on logout
+      this.cart = [];
+      this.isMenuOverlay = false;
       client.auth.signOut();
+      return navigateTo("/");
     },
 
     // New action to fetch the cart items

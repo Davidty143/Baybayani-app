@@ -152,8 +152,6 @@ const addToCart = async () => {
       }
     );
 
-    Console.log;
-
     // Check if the API response was successful
     if (addtocartResponse.value && addtocartResponse.value.data.success === 1) {
       // If success, add to local cart items (just for UI update)
