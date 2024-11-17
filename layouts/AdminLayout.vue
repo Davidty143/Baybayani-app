@@ -65,7 +65,7 @@
             <span
               class="absolute flex items-center justify-center -right-[3px] top-0 bg-[#FF4646] h-[17px] min-w-[17px] text-xs text-white px-0.5 rounded-full"
             >
-              {{ userStore.cart.length }}
+              {{ userStore.cart?.length || 0 }}
             </span>
             <div class="min-w-[40px]">
               <Icon
@@ -162,6 +162,7 @@
 import { useUserStore } from "~/stores/user";
 const userStore = useUserStore();
 await userStore.fetchUser();
+await userStore.fetchCartItems();
 
 const client = useSupabaseClient();
 const user = useSupabaseUser();

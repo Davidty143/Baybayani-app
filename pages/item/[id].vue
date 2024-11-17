@@ -108,23 +108,23 @@ onBeforeMount(async () => {
 });
 
 // Watch user data and update cart items accordingly
-onBeforeMount(async () => {
-  const userId = userStore.user?.id;
-  console.log("Headsadasd");
-  console.log(`/api/prisma/get-cart-by-user/${userId}`); // Print the URL to the console
+// onBeforeMount(async () => {
+//   const userId = userStore.user?.id;
+//   console.log("Headsadasd");
+//   console.log(`/api/prisma/get-cart-by-user/${userId}`); // Print the URL to the console
 
-  if (userId) {
-    console.log("gana pleassee");
-    try {
-      const response = await useFetch(`/api/prisma/get-cart-by-user/${userId}`);
-      if (response.data) {
-        userStore.cartItems = response.data.cartItems;
-      }
-    } catch (error) {
-      console.error("Failed to fetch cart:", error);
-    }
-  }
-});
+//   if (userId) {
+//     console.log("gana pleassee");
+//     try {
+//       const response = await useFetch(`/api/prisma/get-cart-by-user/${userId}`);
+//       if (response.data) {
+//         userStore.cartItems = response.data.cartItems;
+//       }
+//     } catch (error) {
+//       console.error("Failed to fetch cart:", error);
+//     }
+//   }
+// });
 
 watchEffect(() => {
   if (product.value && product.value.data) {
