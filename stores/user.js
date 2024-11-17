@@ -48,10 +48,8 @@ export const useUserStore = defineStore("user", {
 
     // New action to fetch the cart items
     async fetchCartItems() {
-      console.log(this.cart?.id);
-
       let cartResponse = ref(null);
-
+      console.log("FETCH READY TO RUN");
       if (this.cart) return;
       console.log("FETCH CART RUNNING");
       const userId = this.user?.id;

@@ -8,23 +8,20 @@ export default defineEventHandler(async (event) => {
   const { productId } = await readBody(event); // Use readBody to get the body of the request
 
   if (!userId || !productId) {
-    return { success: false, message: "User ID or Product ID is missing" };
+    return { success: 0 }; // Return 0 if either userId or productId is missing
   }
 
   try {
     // First, check if the cart exists for this user
     let cart = await prisma.cart.findUnique({
       where: { userId: userId },
-      include: { cartItems: true }, // Include cart items in the cart
+      include: {
+        cartItems: true, // Only include cartItems, no product details
+      },
     });
 
-    // If no cart exists, create a new cart for the user
     if (!cart) {
-      cart = await prisma.cart.create({
-        data: {
-          userId: userId, // Create a cart with the user's ID
-        },
-      });
+      return { success: 0 }; // Return 0 if cart is not found for the user
     }
 
     // Check if the product already exists in the cart
@@ -33,24 +30,24 @@ export default defineEventHandler(async (event) => {
     );
 
     if (!existingCartItem) {
-      // If the product isn't already in the cart, add it with a quantity of 0
+      // If the product isn't already in the cart, add it with a quantity of 1
       await prisma.cartItem.create({
         data: {
           cartId: cart.id, // Link the cart item to the cart
           productId: productId, // Link the product to the cart item
-          quantity: 0, // Initial quantity is set to 0
+          quantity: 1, // Initial quantity is set to 1
         },
       });
 
       console.log("Product successfully added to cart!");
-      return { success: true, message: "Product added to cart!" };
+      return { success: 1 }; // Return 1 for success
     } else {
-      // If the product is already in the cart, return a message
+      // If the product is already in the cart, return 0
       console.log("Product is already in the cart.");
-      return { success: false, message: "Product is already in the cart" };
+      return { success: 0 }; // Return 0 if product already exists in cart
     }
   } catch (error) {
     console.error("Error adding product to cart:", error);
-    return { success: false, message: "Failed to add product to cart" };
+    return { success: 0 }; // Return 0 for failure
   }
 });
