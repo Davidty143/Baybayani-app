@@ -49,6 +49,7 @@ export const useUserStore = defineStore("user", {
     // New action to fetch the cart items
     async fetchCartItems() {
       console.log(this.cart?.id);
+
       let cartResponse = ref(null);
 
       if (this.cart) return;

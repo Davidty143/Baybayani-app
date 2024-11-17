@@ -134,9 +134,9 @@ watchEffect(() => {
   }
 });
 
-// const isInCart = computed(() => {
-//   return userStore.cartItems.some((prod) => prod.productId === route.params.id);
-// });
+const isInCart = computed(() => {
+  return userStore.cartItems.some((prod) => prod.productId === route.params.id);
+});
 
 const images = ref([
   "",
