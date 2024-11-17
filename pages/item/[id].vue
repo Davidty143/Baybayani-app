@@ -104,6 +104,8 @@ let addtocartResponse = ref(null);
 
 console.log("DISPLAYING THE CART");
 
+console.log(userStore.cartItems);
+
 onBeforeMount(async () => {
   product.value = await useFetch(
     `/api/prisma/get-product-by-id/${route.params.id}`
