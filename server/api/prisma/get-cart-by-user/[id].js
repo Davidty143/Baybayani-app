@@ -4,7 +4,7 @@ const prisma = new PrismaClient();
 
 export default defineEventHandler(async (event) => {
   const userId = event.context.params.id; // Get userId from the request params
-  console.log(userId);
+  //console.log(userId);
 
   try {
     // First, check if a cart already exists for this user
@@ -20,8 +20,8 @@ export default defineEventHandler(async (event) => {
           userId: userId, // Create a cart with the user's ID
         },
       });
+      console.log("CREATED NEW CART FOR USER: " + userId);
     }
-    console.log("success jud");
     return cart;
   } catch (error) {
     console.error("Error fetching or creating cart1:", error);
