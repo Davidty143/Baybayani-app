@@ -4,7 +4,7 @@ const prisma = new PrismaClient();
 
 export default defineEventHandler(async (event) => {
   const userId = event.context.params.id; // Get userId from the request params
-  console.log(userId);
+  //console.log(userId);
 
   try {
     // First, check if a cart already exists for this user

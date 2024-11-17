@@ -15,11 +15,10 @@ export const useUserStore = defineStore("user", {
   actions: {
     // Fetch user profile and cart items
     async fetchUser() {
-      console.log("FETCH USER RUNNING");
-
       if (this.user) {
         return; // Skip fetching if user is already set
       }
+      console.log("FETCH USER RUNNING");
       try {
         const client = useSupabaseClient();
         const { data, error } = await client.auth.getUser();
@@ -30,7 +29,6 @@ export const useUserStore = defineStore("user", {
           console.log("Fetched user ID:", this.user.id);
           const profileData = await fetchUserProfile(this.user.id);
           this.profile = profileData;
-
           // Fetch cart items after the user profile is fetched
           await this.fetchCartItems(); // Call the new action to fetch the cart items
         }
@@ -50,6 +48,10 @@ export const useUserStore = defineStore("user", {
 
     // New action to fetch the cart items
     async fetchCartItems() {
+      console.log(this.cart?.id);
+      let cartResponse = ref(null);
+
+      if (this.cart) return;
       console.log("FETCH CART RUNNING");
       const userId = this.user?.id;
       console.log("Fetching cart items for user ID:", userId);
@@ -57,12 +59,16 @@ export const useUserStore = defineStore("user", {
       if (userId) {
         try {
           // Replace with your actual API endpoint
-          const response = await useFetch(
+          cartResponse.value = await useFetch(
             `/api/prisma/get-cart-by-user/${userId}`
           );
+          console.log("THIS IS A TEST");
+          if (cartResponse.value.data) {
+            this.cart = cartResponse.value.data;
+          }
 
-          if (response.data && response.data.cartItems) {
-            this.cartItems = response.data.cartItems; // Set the fetched cart items
+          if (cartResponse.value.data && cartResponse.value.data.cartItems) {
+            this.cartItems = cartResponse.value.data.cartItems; // Set the fetched cart items
             console.log("Cart items fetched successfully");
           } else {
             console.warn("No cart items found for this user.");
