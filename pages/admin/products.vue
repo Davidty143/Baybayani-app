@@ -18,35 +18,23 @@
           </h1>
 
           <!-- Product Stats Boxes -->
-          <div
-            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-6"
-          >
-            <div
-              class="border border-gray-300 shadow-md p-4 sm:p-6 rounded-lg text-start"
-            >
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+            <div class="border border-gray-300 shadow-md p-4 sm:p-6 rounded-lg text-start">
               <p class="text-sm sm:text-lg font-semibold">Total Products</p>
-              <p class="text-2xl sm:text-3xl font-bold">
-                {{ products.length }}
-              </p>
+              <p class="text-2xl sm:text-3xl font-bold">{{ products.length }}</p>
             </div>
-            <div
-              class="border border-gray-300 shadow-md p-4 sm:p-6 rounded-lg text-start"
-            >
+            <div class="border border-gray-300 shadow-md p-4 sm:p-6 rounded-lg text-start">
               <p class="text-sm sm:text-lg font-semibold">Displayed</p>
               <p class="text-2xl sm:text-3xl font-bold">0</p>
             </div>
-            <div
-              class="border border-gray-300 shadow-md p-4 sm:p-6 rounded-lg text-start"
-            >
+            <div class="border border-gray-300 shadow-md p-4 sm:p-6 rounded-lg text-start">
               <p class="text-sm sm:text-lg font-semibold">Hidden</p>
               <p class="text-2xl sm:text-3xl font-bold">0</p>
             </div>
           </div>
 
           <!-- Search and Add Product Button -->
-          <div
-            class="flex flex-col sm:flex-row sm:justify-between w-full max-w-[1200px] py-6 space-y-4 sm:space-y-0"
-          >
+          <div class="flex flex-col sm:flex-row sm:justify-between w-full max-w-[1200px] py-6 space-y-4 sm:space-y-0">
             <div class="relative w-full sm:w-[350px]">
               <input
                 v-model="searchQuery"
@@ -76,38 +64,20 @@
           </div>
 
           <!-- Product Table -->
-          <div
-            class="overflow-x-auto bg-[#ffffff] border border-gray-300 rounded-md shadow-sm text-sm sm:text-base"
-          >
+          <div class="overflow-x-auto bg-[#ffffff] border border-gray-300 rounded-md shadow-sm text-sm sm:text-base">
             <table class="w-full sm:table-auto lg:table-fixed min-w-[600px]">
               <thead>
                 <tr>
-                  <th
-                    class="py-4 px-6 sm:px-8 border-b bg-gray-200 text-center"
-                  >
-                    Product ID
-                  </th>
-                  <th
-                    class="py-4 px-6 sm:px-8 border-b bg-gray-200 sm:text-center lg:text-left"
-                  >
-                    Product
-                  </th>
-                  <th class="py-4 px-6 sm:px-8 border-b bg-gray-200 text-left">
-                    Price per kg
-                  </th>
-                  <th class="py-4 px-6 sm:px-8 border-b bg-gray-200 text-left">
-                    Supplier/Farmer
-                  </th>
-                  <th class="py-4 px-6 sm:px-8 border-b bg-gray-200 text-start">
-                    Action
-                  </th>
+                  <th class="py-4 px-6 sm:px-8 border-b bg-gray-200 text-center">Product ID</th>
+                  <th class="py-4 px-6 sm:px-8 border-b bg-gray-200 sm:text-center lg:text-left">Product</th>
+                  <th class="py-4 px-6 sm:px-8 border-b bg-gray-200 text-left">Price per kg</th>
+                  <th class="py-4 px-6 sm:px-8 border-b bg-gray-200 text-left">Supplier/Farmer</th>
+                  <th class="py-4 px-6 sm:px-8 border-b bg-gray-200 text-start">Action</th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-for="product in filteredProducts" :key="product.id">
-                  <td class="py-4 px-6 sm:px-8 border-b text-center">
-                    {{ product.id }}
-                  </td>
+                  <td class="py-4 px-6 sm:px-8 border-b text-center">{{ product.id }}</td>
                   <td class="py-4 px-6 sm:px-8 border-b text-left">
                     <div class="flex items-center space-x-4 sm:space-x-6">
                       <img
@@ -115,14 +85,10 @@
                         alt="Product Image"
                         class="w-12 h-12 sm:w-16 sm:h-16 object-cover rounded-lg"
                       />
-                      <span class="text-sm sm:text-base">{{
-                        product.title
-                      }}</span>
+                      <span class="text-sm sm:text-base">{{ product.title }}</span>
                     </div>
                   </td>
-                  <td class="py-4 px-6 sm:px-8 border-b text-left">
-                    ₱{{ product.price }}
-                  </td>
+                  <td class="py-4 px-6 sm:px-8 border-b text-left">₱{{ product.price }}</td>
                   <td class="py-4 px-6 sm:px-8 border-b text-left">Farmer 1</td>
                   <td class="py-4 px-6 sm:px-8 border-b text-start">
                     <button
@@ -140,9 +106,15 @@
       </div>
 
       <!-- Main Content Area (Rest of the page) -->
-      <div class="flex-1 ml-20 sm:ml-64 p-6">
-        <!-- This is where the rest of the content would go -->
-        <!-- You can add your other components here -->
+      <div
+        :class="{
+          'flex-1': true,
+          'ml-20': !sidebarOpen,
+          'ml-64': sidebarOpen
+        }"
+        class="p-6"
+      >
+        <!-- Content goes here -->
       </div>
     </div>
   </LayoutAdmin>
