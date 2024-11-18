@@ -98,33 +98,19 @@ const route = useRoute();
 
 let product = ref(null);
 let currentImage = ref(null);
+let addtocartResponse = ref(null);
 
 // pag fetch sa product page
+
+console.log("DISPLAYING THE CART");
+
+console.log(userStore.cartItems);
 
 onBeforeMount(async () => {
   product.value = await useFetch(
     `/api/prisma/get-product-by-id/${route.params.id}`
   );
 });
-
-// Watch user data and update cart items accordingly
-// onBeforeMount(async () => {
-//   const userId = userStore.user?.id;
-//   console.log("Headsadasd");
-//   console.log(`/api/prisma/get-cart-by-user/${userId}`); // Print the URL to the console
-
-//   if (userId) {
-//     console.log("gana pleassee");
-//     try {
-//       const response = await useFetch(`/api/prisma/get-cart-by-user/${userId}`);
-//       if (response.data) {
-//         userStore.cartItems = response.data.cartItems;
-//       }
-//     } catch (error) {
-//       console.error("Failed to fetch cart:", error);
-//     }
-//   }
-// });
 
 watchEffect(() => {
   if (product.value && product.value.data) {
@@ -134,9 +120,9 @@ watchEffect(() => {
   }
 });
 
-// const isInCart = computed(() => {
-//   return userStore.cartItems.some((prod) => prod.productId === route.params.id);
-// });
+const isInCart = computed(() => {
+  return userStore.cartItems.some((prod) => prod.productId === route.params.id);
+});
 
 const images = ref([
   "",
@@ -147,11 +133,39 @@ const images = ref([
   "https://picsum.photos/id/144/800/800",
 ]);
 
-// const addToCart = async () => {
-//   userStore.cartItems.push({
-//     productId: product.value.data.id,
-//     quantity: 1,
-//     productTitle: product.value.data.title,
-//   });
-// };
+const addToCart = async () => {
+  if (!product.value || !userStore.user) return;
+  console.log("ADD TO CART CLICKED");
+  const productData = product.value.data;
+  const userId = userStore.user.id; // Assuming userStore has a logged-in user
+
+  try {
+    // Call API to add the product to the user's cart
+    addtocartResponse.value = await useFetch(
+      `/api/prisma/add-product-to-cart/${userId}`,
+      {
+        method: "POST",
+        body: {
+          userId,
+          productId: productData.id,
+        },
+      }
+    );
+
+    // Check if the API response was successful
+    if (addtocartResponse.value && addtocartResponse.value.data.success === 1) {
+      // If success, add to local cart items (just for UI update)
+      userStore.cartItems.push({
+        productId: productData.id,
+        quantity: 1,
+        productTitle: productData.title,
+        productPrice: productData.price, // Add product price here
+      });
+    } else {
+      console.error("Product already in cart!", addtocartResponse.value);
+    }
+  } catch (error) {
+    console.error("Error adding product to cart:", error);
+  }
+};
 </script>

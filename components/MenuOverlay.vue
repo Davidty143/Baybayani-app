@@ -79,9 +79,10 @@ const goTo = (url) => {
 };
 
 const signOut = () => {
-  client.auth.signOut();
-  userStore.isMenuOverlay = false;
-  return navigateTo("/");
+  userStore.logout();
+  //client.auth.signOut();
+  //userStore.isMenuOverlay = false;
+  //return navigateTo("/");
 };
 
 const signIn = () => {

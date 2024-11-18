@@ -43,15 +43,17 @@ export const useUserStore = defineStore("user", {
       this.user = null;
       this.profile = null;
       this.cartItems = []; // Clear cart items on logout
+      this.cart = [];
+      this.isMenuOverlay = false;
       client.auth.signOut();
+      return navigateTo("/");
     },
 
     // New action to fetch the cart items
     async fetchCartItems() {
-      console.log(this.cart?.id);
       let cartResponse = ref(null);
-
-      if (this.cart) return;
+      console.log("FETCH READY TO RUN");
+      //if (this.cart) return;
       console.log("FETCH CART RUNNING");
       const userId = this.user?.id;
       console.log("Fetching cart items for user ID:", userId);
