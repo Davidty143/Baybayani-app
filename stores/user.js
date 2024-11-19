@@ -46,12 +46,13 @@ export const useUserStore = defineStore("user", {
       this.cart = [];
       this.isMenuOverlay = false;
       client.auth.signOut();
-      return navigateTo("/");
+      console.log("LOGOUT SUCESS");
+      window.location.reload();
     },
 
     // New action to fetch the cart items
     async fetchCartItems() {
-      if (this.cart) return;
+      if (this.cartItems.length > 0) return;
       let cartResponse = ref(null);
       console.log("FETCH READY TO RUN");
       //if (this.cart) return;

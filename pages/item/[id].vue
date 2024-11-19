@@ -1,5 +1,5 @@
 <template>
-  <MainLayout>
+  <AdminLayout>
     <div id="ItemPage" class="mt-4 max-w-[1200px] mx-auto px-2">
       <div class="md:flex gap-4 justify-between mx-auto w-full">
         <div class="md:w-[40%]">
@@ -85,12 +85,12 @@
         <p>Your cart is empty.</p>
       </div>
     </div>
-  </MainLayout>
+  </AdminLayout>
 </template>
 
 <script setup>
 // item/[id].vue
-import MainLayout from "~/layouts/MainLayout.vue";
+import AdminLayout from "~/layouts/AdminLayout.vue";
 import { useUserStore } from "~/stores/user"; // Assuming you have this store
 const userStore = useUserStore();
 
@@ -103,8 +103,6 @@ let addtocartResponse = ref(null);
 // pag fetch sa product page
 
 console.log("DISPLAYING THE CART");
-
-console.log(userStore.cartItems);
 
 onBeforeMount(async () => {
   product.value = await useFetch(
@@ -139,11 +137,29 @@ const images = ref([
 const addToCart = async () => {
   if (!product.value || !userStore.user) return;
   console.log("ADD TO CART CLICKED");
+
   const productData = product.value.data;
   const userId = userStore.user.id; // Assuming userStore has a logged-in user
 
+  // Check if the product is already in the cart
+  const productInCart = userStore.cartItems.some(
+    (item) => String(item.productId) === String(productData.id)
+  );
+
+  if (productInCart) {
+    console.log("Product is already in the cart!");
+    return; // Exit early, no need to make an API call
+  }
+
+  userStore.cartItems.push({
+    productId: productData.id,
+    quantity: 1,
+    productTitle: productData.title,
+    productPrice: productData.price, // Add product price here
+  });
+
   try {
-    // Call API to add the product to the user's cart
+    // Proceed with the API call to add the product to the user's cart
     addtocartResponse.value = await useFetch(
       `/api/prisma/add-product-to-cart/${userId}`,
       {
@@ -156,17 +172,6 @@ const addToCart = async () => {
     );
 
     // Check if the API response was successful
-    if (addtocartResponse.value && addtocartResponse.value.data.success === 1) {
-      // If success, add to local cart items (just for UI update)
-      userStore.cartItems.push({
-        productId: productData.id,
-        quantity: 1,
-        productTitle: productData.title,
-        productPrice: productData.price, // Add product price here
-      });
-    } else {
-      console.error("Product already in cart!", addtocartResponse.value);
-    }
   } catch (error) {
     console.error("Error adding product to cart:", error);
   }

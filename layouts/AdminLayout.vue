@@ -65,7 +65,7 @@
             <span
               class="absolute flex items-center justify-center -right-[3px] top-0 bg-[#FF4646] h-[17px] min-w-[17px] text-xs text-white px-0.5 rounded-full"
             >
-              {{ userStore.cart?.length || 0 }}
+              {{ userStore.cartItems.length }}
             </span>
             <div class="min-w-[40px]">
               <Icon
@@ -150,7 +150,7 @@
     </div>
   </div>
 
-  <!-- <Loading v-if="userStore.isLoading" /> -->
+  <!--   <Loading v-if="userStore.isLoading" /> -->
 
   <div class="lg:pt-[150px] md:pt-[130px] pt-[80px]" />
   <slot />
@@ -161,10 +161,10 @@
 <script setup>
 import { useUserStore } from "~/stores/user";
 const userStore = useUserStore();
-await userStore.fetchUser();
-if (!userStore.cart) {
-  await userStore.fetchCartItems();
-}
+
+//if (!userStore.cart) {
+await userStore.fetchCartItems();
+//}
 
 const client = useSupabaseClient();
 const user = useSupabaseUser();
