@@ -9,10 +9,15 @@ export default defineEventHandler(async (event) => {
   try {
     // First, check if a cart already exists for this user
     let cart = await prisma.cart.findFirst({
-      where: { userId: userId }, // Pass the userId to find the cart
-      include: { cartItems: true },
+      where: { userId: userId }, // Find the cart by the userId
+      include: {
+        cartItems: {
+          include: {
+            product: true, // Include the entire product details for each cart item
+          },
+        },
+      },
     });
-
     if (!cart) {
       // If no cart exists, create a new cart for the user
       cart = await prisma.cart.create({

@@ -1,8 +1,8 @@
 <template>
-  <MainLayout>
+  <AdminLayout>
     <div id="ShoppingCartPage" class="mt-4 max-w-[1200px] mx-auto px-2">
       <div
-        v-if="!userStore.cart.length"
+        v-if="!userStore.cartItems.length"
         class="h-[500px] flex items-center justify-center"
       >
         <div class="pt-20">
@@ -26,7 +26,7 @@
         <div class="md:w-[65%]">
           <div class="bg-white rounded-lg p-4">
             <div class="text-2xl font-bold mb-2">
-              Shopping Cart ({{ userStore.cart.length }})
+              Shopping Cart ({{ userStore.cartItems.length }})
             </div>
           </div>
 
@@ -40,9 +40,12 @@
           <!-- The code dynamically renders a list of CartItem components from the user's cart, passing each product's data and selection state, and listens for selection changes to handle updates in the parent component. -->
 
           <div id="Items" class="bg-white rounded-lg p-4 mt-4">
-            <div v-for="product in userStore.cart">
+            <div
+              v-for="(cartItem, index) in userStore.cartItems"
+              :key="cartItem.id"
+            >
               <CartItem
-                :product="product"
+                :product="userStore.cartItems[index].product"
                 :selectedArray="selectedArray"
                 @selectedRadio="selectedRadioFunc"
               />
@@ -81,11 +84,11 @@
         </div>
       </div>
     </div>
-  </MainLayout>
+  </AdminLayout>
 </template>
 
 <script setup>
-import MainLayout from "~/layouts/MainLayout.vue";
+import AdminLayout from "~/layouts/AdminLayout.vue";
 import { useUserStore } from "~/stores/user";
 const userStore = useUserStore();
 const user = useSupabaseUser();
@@ -100,7 +103,7 @@ let selectedArray = ref([]);
 
 const totalPriceComputed = computed(() => {
   let price = 0;
-  userStore.cart.forEach((prod) => {
+  userStore.cartItems.forEach((prod) => {
     price += prod.price;
   });
   return price / 100;

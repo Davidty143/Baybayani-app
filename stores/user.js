@@ -7,6 +7,7 @@ export const useUserStore = defineStore("user", {
     isLoading: false,
     cart: [], // Assuming this holds the main cart info
     cartItems: [], // This will hold the cart items fetched from the server
+    products: [],
     checkout: [],
     user: null, // auth info
     profile: null, // profile info
@@ -73,6 +74,10 @@ export const useUserStore = defineStore("user", {
 
           if (cartResponse.value.data && cartResponse.value.data.cartItems) {
             this.cartItems = cartResponse.value.data.cartItems; // Set the fetched cart items
+            //this.products = cartResponse.value.data.cartItems.product;
+            //console.log(this.cartItems[0].product);
+            //console.log(this.products);
+
             console.log("Cart items fetched successfully");
           } else {
             console.warn("No cart items found for this user.");

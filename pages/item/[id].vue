@@ -156,6 +156,7 @@ const addToCart = async () => {
     quantity: 1,
     productTitle: productData.title,
     productPrice: productData.price, // Add product price here
+    productUrl: productData.url,
   });
 
   try {

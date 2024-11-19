@@ -1,3 +1,4 @@
+// add-product-to-cart/[id].js
 import { PrismaClient } from "@prisma/client";
 import { readBody } from "h3"; // Import readBody from h3
 
@@ -16,7 +17,7 @@ export default defineEventHandler(async (event) => {
     let cart = await prisma.cart.findUnique({
       where: { userId: userId },
       include: {
-        cartItems: true, // Only include cartItems, no product details
+        cartItems: true,
       },
     });
 
