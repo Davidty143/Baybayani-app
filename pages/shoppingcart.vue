@@ -99,6 +99,39 @@ watchEffect(async () => {
   }
 });
 
+// Function to handle product removal from the cart
+const handleRemoveProductFromCart = async ({ userId, productId }) => {
+  try {
+    // Send a DELETE request to the backend API
+    const response = await fetch(
+      `/api/prisma/remove-product-to-cart/${userId}?productId=${productId}`,
+      {
+        method: "DELETE",
+      }
+    );
+
+    const result = await response.json(); // Parse the response as JSON
+
+    if (result.success === 1) {
+      console.log("Product successfully removed from cart!");
+
+      // Update the store state by removing the product from the cart
+      userStore.cartItems = userStore.cartItems.filter(
+        (item) => item.productId !== productId
+      );
+
+      // Optionally, update the local state as well
+      cartItems.value = cartItems.value.filter(
+        (item) => item.productId !== productId
+      );
+    } else {
+      console.log("Error: Could not remove product from cart.");
+    }
+  } catch (error) {
+    console.error("Error deleting product from cart:", error);
+  }
+};
+
 let selectedArray = ref([]);
 
 const totalPriceComputed = computed(() => {

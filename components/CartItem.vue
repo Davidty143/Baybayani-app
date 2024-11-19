@@ -37,7 +37,7 @@
         <!-- Remove From Cart -->
 
         <button
-          @click="removeFromCart()"
+          @click="deleteFromCart()"
           class="mx-3 sm:block hidden -mt-0.5 hover:text-red-500"
         >
           <Icon name="material-symbols:delete-outline" size="20" />
@@ -51,11 +51,9 @@
         <span class="font-bold text-[#FD374F]">{{ product.price }}</span>
       </div>
 
-      <p class="text-[#009A66] text-xs font-semibold pt-1">QUANTITY NI DIRI</p>
-
       <div class="flex items-center justify-end">
         <button
-          @click="removeFromCart()"
+          @click="deleteFromCart()"
           class="sm:hidden block -mt-0.5 hover:text-red-500"
         >
           <Icon name="material-symbols:delete-outline" size="20" />
@@ -77,14 +75,46 @@ const emit = defineEmits(["selectedRadio"]); // Define the event `selectedRadio`
 let isHover = ref(false);
 let isSelected = ref(false);
 
-const removeFromCart = () => {
-  userStore.cartItems.forEach((prod, index) => {
-    // Iterate over the products in the cart
-    if (prod.id === product.value.id) {
-      // Check if the product in the cart matches the current product
-      userStore.cartItems.splice(index, 1); // If it matches, remove the product from the cart using splice
+// const removeFromCart = () => {
+//   userStore.cartItems.forEach((prod, index) => {
+//     // Iterate over the products in the cart
+//     if (prod.id === product.value.id) {
+//       // Check if the product in the cart matches the current product
+//       userStore.cartItems.splice(index, 1); // If it matches, remove the product from the cart using splice
+//     }
+//   });
+// };
+
+// Function to remove a product from the cart using Supabase
+const deleteFromCart = async () => {
+  const userId = userStore.user.id; // Assuming userStore holds user data
+  const productId = props.product.id; // Assuming props.product holds the product to delete
+
+  console.log("Deleting product:", productId);
+
+  try {
+    const response = await fetch(
+      `/api/prisma/remove-product-to-cart/${userId}/${productId}`,
+      {
+        method: "DELETE",
+      }
+    );
+
+    const data = await response.json();
+
+    userStore.cartItems = userStore.cartItems.filter(
+      (item) => item.productId !== productId
+    );
+
+    if (data.success === 1) {
+      console.log("Product successfully removed from cart!");
+      // Optionally update the store or UI here
+    } else {
+      console.log("Error:", data.message);
     }
-  });
+  } catch (error) {
+    console.error("Error deleting product from cart:", error);
+  }
 };
 
 watch(
@@ -94,4 +124,29 @@ watch(
     emit("selectedRadio", { id: product.value.id, val: val }); // Emit the `selectedRadio` event with the product's `id` and its selection state
   }
 );
+
+// Function to handle quantity change
+const updateQuantity = () => {
+  const cartIndex = userStore.cartItems.findIndex(
+    (item) => item.id === product.value.id
+  );
+
+  if (cartIndex !== -1) {
+    userStore.cartItems[cartIndex].quantity = product.value.quantity;
+  }
+};
+
+// Function to increase the quantity
+const increaseQuantity = () => {
+  product.value.quantity++;
+  updateQuantity(); // Update the quantity in the user store
+};
+
+// Function to decrease the quantity
+const decreaseQuantity = () => {
+  if (product.value.quantity > 1) {
+    product.value.quantity--;
+    updateQuantity(); // Update the quantity in the user store
+  }
+};
 </script>

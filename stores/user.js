@@ -8,6 +8,7 @@ export const useUserStore = defineStore("user", {
     cart: [], // Assuming this holds the main cart info
     cartItems: [], // This will hold the cart items fetched from the server
     products: [],
+    deleteProduct: null,
     checkout: [],
     user: null, // auth info
     profile: null, // profile info
