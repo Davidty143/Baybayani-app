@@ -162,7 +162,9 @@
 import { useUserStore } from "~/stores/user";
 const userStore = useUserStore();
 await userStore.fetchUser();
-await userStore.fetchCartItems();
+if (!userStore.cart) {
+  await userStore.fetchCartItems();
+}
 
 const client = useSupabaseClient();
 const user = useSupabaseUser();

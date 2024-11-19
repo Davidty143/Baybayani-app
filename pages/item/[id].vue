@@ -121,7 +121,10 @@ watchEffect(() => {
 });
 
 const isInCart = computed(() => {
-  return userStore.cartItems.some((prod) => prod.productId === route.params.id);
+  const currentProductId = route.params.id; // Get the product ID from the route
+  return userStore.cartItems.some((prod) => {
+    return String(prod.productId) === String(currentProductId); // Convert both to strings and compare
+  });
 });
 
 const images = ref([

@@ -51,6 +51,7 @@ export const useUserStore = defineStore("user", {
 
     // New action to fetch the cart items
     async fetchCartItems() {
+      if (this.cart) return;
       let cartResponse = ref(null);
       console.log("FETCH READY TO RUN");
       //if (this.cart) return;
