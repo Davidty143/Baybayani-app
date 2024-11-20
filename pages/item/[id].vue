@@ -172,6 +172,10 @@ const addToCart = async () => {
       }
     );
 
+    userStore.refreshFlag = 1;
+    console.log("Ready to call");
+    await userStore.fetchCartItems();
+
     // Check if the API response was successful
   } catch (error) {
     console.error("Error adding product to cart:", error);

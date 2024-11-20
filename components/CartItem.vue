@@ -59,6 +59,27 @@
           <Icon name="material-symbols:delete-outline" size="20" />
         </button>
       </div>
+      <!-- Quantity Selector -->
+      <div class="flex items-center justify-between mt-3">
+        <button
+          @click="decreaseQuantity"
+          class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-full"
+        >
+          -
+        </button>
+        <input
+          type="text"
+          class="mx-2 w-[50px] text-center border-gray-300 border rounded-md"
+          v-model="product.quantity"
+          @blur="updateQuantity"
+        />
+        <button
+          @click="increaseQuantity"
+          class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-full"
+        >
+          +
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -92,6 +113,10 @@ const deleteFromCart = async () => {
 
   console.log("Deleting product:", productId);
 
+  userStore.cartItems = userStore.cartItems.filter(
+    (item) => item.productId !== productId
+  );
+
   try {
     const response = await fetch(
       `/api/prisma/remove-product-to-cart/${userId}/${productId}`,
@@ -101,10 +126,6 @@ const deleteFromCart = async () => {
     );
 
     const data = await response.json();
-
-    userStore.cartItems = userStore.cartItems.filter(
-      (item) => item.productId !== productId
-    );
 
     if (data.success === 1) {
       console.log("Product successfully removed from cart!");
@@ -125,28 +146,32 @@ watch(
   }
 );
 
-// Function to handle quantity change
-const updateQuantity = () => {
-  const cartIndex = userStore.cartItems.findIndex(
-    (item) => item.id === product.value.id
-  );
+console.log("testttttt", userStore.cartItems);
 
+// Function to update quantity in the store
+const updateQuantity = () => {
+  console.log("Updating quantity for product", props.product.id);
+  const cartIndex = userStore.cartItems.findIndex(
+    (item) => item.productId === props.product.id
+  );
+  console.log("curent quantity", userStore.cartItems[index].quantity);
   if (cartIndex !== -1) {
-    userStore.cartItems[cartIndex].quantity = product.value.quantity;
+    userStore.cartItems[cartIndex].quantity = props.product.quantity; // Update cart item quantity
   }
 };
 
-// Function to increase the quantity
+// Function to increase quantity
 const increaseQuantity = () => {
-  product.value.quantity++;
-  updateQuantity(); // Update the quantity in the user store
+  product.value.quantity++; // Increment quantity
+  updateQuantity(); // Update the quantity in the store
 };
 
-// Function to decrease the quantity
+// Function to decrease quantity
 const decreaseQuantity = () => {
   if (product.value.quantity > 1) {
-    product.value.quantity--;
-    updateQuantity(); // Update the quantity in the user store
+    // Prevent decreasing quantity below 1
+    product.value.quantity--; // Decrement quantity
+    updateQuantity(); // Update the quantity in the store
   }
 };
 </script>

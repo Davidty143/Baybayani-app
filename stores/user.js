@@ -9,6 +9,7 @@ export const useUserStore = defineStore("user", {
     cartItems: [], // This will hold the cart items fetched from the server
     products: [],
     deleteProduct: null,
+    refreshFlag: 0,
     checkout: [],
     user: null, // auth info
     profile: null, // profile info
@@ -54,13 +55,17 @@ export const useUserStore = defineStore("user", {
 
     // New action to fetch the cart items
     async fetchCartItems() {
-      if (this.cartItems.length > 0) return;
+      if (this.cartItems.length > 0 && this.refreshFlag === 0) return;
+
+      console.log("FETCH CART RUNNING");
       let cartResponse = ref(null);
       console.log("FETCH READY TO RUN");
       //if (this.cart) return;
       console.log("FETCH CART RUNNING");
+      console.log("REFRESH FLAG" + this.refreshFlag);
       const userId = this.user?.id;
       console.log("Fetching cart items for user ID:", userId);
+      this.refreshFlag = 0;
 
       if (userId) {
         try {
