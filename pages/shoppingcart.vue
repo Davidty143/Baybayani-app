@@ -78,8 +78,8 @@
             <div class="text-lg font-semibold mb-2">Order Details</div>
 
             <div class="border-b my-5" />
-            <p class="my-2">Total Items: 2</p>
-            <p class="my-2">Total Unit: 45.54 kg</p>
+            <p class="my-2">Total Items: {{ selectedItemsCount }}</p>
+            <p class="my-2">Total Unit: {{ totalWeight }} kg</p>
           </div>
         </div>
       </div>
@@ -93,68 +93,35 @@ import { useUserStore } from "~/stores/user";
 const userStore = useUserStore();
 const user = useSupabaseUser();
 
-watchEffect(async () => {
-  if (!user.value) {
-    await navigateTo("/login");
-  }
-});
-
-// Function to handle product removal from the cart
-const handleRemoveProductFromCart = async ({ userId, productId }) => {
-  try {
-    // Send a DELETE request to the backend API
-    const response = await fetch(
-      `/api/prisma/remove-product-to-cart/${userId}?productId=${productId}`,
-      {
-        method: "DELETE",
-      }
-    );
-
-    const result = await response.json(); // Parse the response as JSON
-
-    if (result.success === 1) {
-      console.log("Product successfully removed from cart!");
-
-      // Update the store state by removing the product from the cart
-      userStore.cartItems = userStore.cartItems.filter(
-        (item) => item.productId !== productId
-      );
-
-      // Optionally, update the local state as well
-      cartItems.value = cartItems.value.filter(
-        (item) => item.productId !== productId
-      );
-    } else {
-      console.log("Error: Could not remove product from cart.");
-    }
-  } catch (error) {
-    console.error("Error deleting product from cart:", error);
-  }
-};
-
 let selectedArray = ref([]);
 
+const selectedItemsCount = computed(() => selectedArray.value.length);
+const totalWeight = computed(() => {
+  return selectedArray.value.reduce((sum, item) => sum + item.quantity, 0);
+});
 const totalPriceComputed = computed(() => {
-  let price = 0;
-  userStore.cartItems.forEach((prod) => {
-    price += prod.price;
-  });
-  return price / 100;
+  return selectedArray.value.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0
+  );
 });
 
 const selectedRadioFunc = (e) => {
-  if (!selectedArray.value.length) {
-    selectedArray.value.push(e);
-    return;
-  }
+  const existingIndex = selectedArray.value.findIndex(
+    (item) => item.id === e.id
+  );
 
-  selectedArray.value.forEach((item, index) => {
-    if (e.id != item.id) {
-      selectedArray.value.push(e);
+  if (e.val) {
+    if (existingIndex === -1) {
+      selectedArray.value.push({ ...e, quantity: e.quantity });
     } else {
-      selectedArray.value.splice(index, 1);
+      selectedArray.value[existingIndex].quantity = e.quantity;
     }
-  });
+  } else {
+    if (existingIndex !== -1) {
+      selectedArray.value.splice(existingIndex, 1);
+    }
+  }
 };
 
 const goToCheckout = () => {
@@ -171,4 +138,10 @@ const goToCheckout = () => {
 
   return navigateTo("/checkout");
 };
+
+watchEffect(async () => {
+  if (!user.value) {
+    await navigateTo("/login");
+  }
+});
 </script>

@@ -22,6 +22,7 @@ export const useUserStore = defineStore("user", {
         return; // Skip fetching if user is already set
       }
       console.log("FETCH USER RUNNING");
+      this.isLoading = true;
       try {
         const client = useSupabaseClient();
         const { data, error } = await client.auth.getUser();
@@ -37,6 +38,9 @@ export const useUserStore = defineStore("user", {
         }
       } catch (err) {
         console.error("Unexpected error fetching user:", err);
+        this.isLoading = false;
+      } finally {
+        this.isLoading = false; // Ensure isLoading is false after the fetch completes
       }
     },
 
@@ -58,12 +62,16 @@ export const useUserStore = defineStore("user", {
       if (this.cartItems.length > 0 && this.refreshFlag === 0) return;
 
       console.log("FETCH CART RUNNING");
+      this.isLoading = true;
       let cartResponse = ref(null);
-      console.log("FETCH READY TO RUN");
-      //if (this.cart) return;
-      console.log("FETCH CART RUNNING");
-      console.log("REFRESH FLAG" + this.refreshFlag);
+
       const userId = this.user?.id;
+
+      if (!userId) {
+        console.warn("No user ID found, cannot fetch cart items.");
+        this.isLoading = false; // Set loading to false if no user ID
+        return;
+      }
       console.log("Fetching cart items for user ID:", userId);
       this.refreshFlag = 0;
 
@@ -85,15 +93,21 @@ export const useUserStore = defineStore("user", {
             //console.log(this.products);
 
             console.log("Cart items fetched successfully");
+            this.isLoading = false;
           } else {
+            this.isLoading = false;
             console.warn("No cart items found for this user.");
           }
         } catch (error) {
           console.error("Failed to fetch cart:", error);
+          this.isLoading = false;
+        } finally {
+          this.isLoading = false; // Set loading to false after the fetch is done
         }
       } else {
         console.warn("No user ID found, cannot fetch cart items.");
       }
+      this.isLoading = false;
     },
   },
 

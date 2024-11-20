@@ -1,7 +1,7 @@
+<!--/components/CartItem.vue -->
 <template>
   <div class="flex justify-start my-2">
     <!-- Check Button -->
-
     <div class="my-auto">
       <div
         @mouseenter="isHover = true"
@@ -9,7 +9,7 @@
         class="flex items-center justify-start p-0.5 cursor-pointer"
       >
         <div
-          @click="isSelected = !isSelected"
+          @click="toggleSelection"
           class="flex items-center justify-center h-[20px] w-[20px] rounded-full border mr-5 ml-2"
           :class="[
             isHover ? 'border-[#0C6539]' : 'border-gray-300',
@@ -96,17 +96,18 @@ const emit = defineEmits(["selectedRadio"]); // Define the event `selectedRadio`
 let isHover = ref(false);
 let isSelected = ref(false);
 
-// const removeFromCart = () => {
-//   userStore.cartItems.forEach((prod, index) => {
-//     // Iterate over the products in the cart
-//     if (prod.id === product.value.id) {
-//       // Check if the product in the cart matches the current product
-//       userStore.cartItems.splice(index, 1); // If it matches, remove the product from the cart using splice
-//     }
-//   });
-// };
+onMounted(() => {
+  const cartIndex = userStore.cartItems.findIndex(
+    (item) => item.productId === product.value.id
+  );
 
-// Function to remove a product from the cart using Supabase
+  if (cartIndex !== -1) {
+    product.value.quantity = userStore.cartItems[cartIndex].quantity;
+  }
+
+  updateQuantity();
+});
+
 const deleteFromCart = async () => {
   const userId = userStore.user.id; // Assuming userStore holds user data
   const productId = props.product.id; // Assuming props.product holds the product to delete
@@ -116,6 +117,15 @@ const deleteFromCart = async () => {
   userStore.cartItems = userStore.cartItems.filter(
     (item) => item.productId !== productId
   );
+
+  if (isSelected.value) {
+    // This will also notify the parent component to remove this product from `selectedArray`
+    emit("selectedRadio", {
+      id: product.value.id,
+      quantity: product.value.quantity, // Send the quantity as well
+      val: false, // Unselect the product
+    });
+  }
 
   try {
     const response = await fetch(
@@ -138,25 +148,42 @@ const deleteFromCart = async () => {
   }
 };
 
+const toggleSelection = () => {
+  console.log("Toggle Clicked!");
+  isSelected.value = !isSelected.value;
+  emitSelectionUpdate();
+};
+
+const emitSelectionUpdate = () => {
+  emit("selectedRadio", {
+    id: product.value.id,
+    quantity: product.value.quantity, // Send the quantity as well
+    val: isSelected.value,
+  });
+};
+
 watch(
   () => isSelected.value,
   (val) => {
-    // Watch for changes in `isSelected` (whether the product is selected)
-    emit("selectedRadio", { id: product.value.id, val: val }); // Emit the `selectedRadio` event with the product's `id` and its selection state
+    emitSelectionUpdate(); // Emit the updated selection state
   }
 );
 
-console.log("testttttt", userStore.cartItems);
-
-// Function to update quantity in the store
 const updateQuantity = () => {
-  console.log("Updating quantity for product", props.product.id);
+  console.log("Updating quantity for product", product.value.id);
+
+  // Find the product index in the cartItems array
   const cartIndex = userStore.cartItems.findIndex(
-    (item) => item.productId === props.product.id
+    (item) => item.productId === product.value.id
   );
-  console.log("curent quantity", userStore.cartItems[index].quantity);
+
   if (cartIndex !== -1) {
-    userStore.cartItems[cartIndex].quantity = props.product.quantity; // Update cart item quantity
+    // Update the quantity in the store
+    userStore.cartItems[cartIndex].quantity = product.value.quantity;
+    console.log("current quantity", userStore.cartItems[cartIndex].quantity);
+    emitSelectionUpdate();
+  } else {
+    console.log("Product not found in cart");
   }
 };
 
@@ -168,7 +195,7 @@ const increaseQuantity = () => {
 
 // Function to decrease quantity
 const decreaseQuantity = () => {
-  if (product.value.quantity > 1) {
+  if (props.product.quantity > 1) {
     // Prevent decreasing quantity below 1
     product.value.quantity--; // Decrement quantity
     updateQuantity(); // Update the quantity in the store

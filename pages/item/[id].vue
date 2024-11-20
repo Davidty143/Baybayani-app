@@ -1,5 +1,6 @@
 <template>
   <AdminLayout>
+    <Loading v-if="userStore.isLoading" />
     <div id="ItemPage" class="mt-4 max-w-[1200px] mx-auto px-2">
       <div class="md:flex gap-4 justify-between mx-auto w-full">
         <div class="md:w-[40%]">
@@ -151,6 +152,8 @@ const addToCart = async () => {
     return; // Exit early, no need to make an API call
   }
 
+  userStore.isLoading = true;
+
   userStore.cartItems.push({
     productId: productData.id,
     quantity: 1,
@@ -175,6 +178,10 @@ const addToCart = async () => {
     userStore.refreshFlag = 1;
     console.log("Ready to call");
     await userStore.fetchCartItems();
+
+    setTimeout(() => {
+      userStore.isLoading = false; // Set loading to false after 2 seconds
+    }, 500);
 
     // Check if the API response was successful
   } catch (error) {
