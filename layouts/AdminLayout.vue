@@ -162,7 +162,7 @@
 import { useUserStore } from "~/stores/user";
 const userStore = useUserStore();
 
-//if (!userStore.cart) {
+//if (!userStore.) {
 await userStore.fetchCartItems();
 //}
 

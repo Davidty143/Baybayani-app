@@ -1,5 +1,5 @@
 <template>
-  <MainLayout>
+  <AdminLayout>
     <div id="SuccessPage" class="mt-4 max-w-[1200px] mx-auto px-2 min-h-[50vh]">
       <div class="bg-white w-full p-6 min-h-[150px]">
         <div class="flex items-center text-xl">
@@ -15,10 +15,11 @@
         </p>
       </div>
     </div>
-  </MainLayout>
+  </AdminLayout>
 </template>
 
 <script setup>
+import AdminLayout from "~/layouts/AdminLayout.vue";
 import MainLayout from "~/layouts/MainLayout.vue";
 import { useUserStore } from "~/stores/user";
 const userStore = useUserStore();

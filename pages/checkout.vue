@@ -98,6 +98,11 @@ onMounted(() => {
   });
 });
 
+const removeOrderedItems = (checkout) => {
+  const checkoutData = userStore.checkout.map((item) => item.product.id); // Get the list of product IDs in the current checkout
+  return checkout.filter((item) => !checkoutData.includes(item.product.id)); // Filter out the ordered items
+};
+
 const placeOrder = async () => {
   try {
     console.log("Placing the order...");
@@ -106,19 +111,24 @@ const placeOrder = async () => {
     console.log("User ID:", user.value.id); // Log user ID
     console.log("Checkout items:", userStore.checkout); // Log the checkout items
 
-    // Call createOrder to send the order to the backend
+    setTimeout(() => {
+      console.log("Redirecting to the success page...");
+      navigateTo("/success"); // Redirect to the success page
+    }, 500);
     await createOrder();
+
+    // Call createOrder to send the order to the backend
+
+    userStore.checkout = removeOrderedItems(userStore.checkout);
 
     // Clear the checkout items after placing the order
     //userStore.cart = []; // Clear the cart (optional, if you want to empty the cart after order)
     userStore.checkout = []; // Clear the checkout items
     console.log("Checkout items cleared.");
+    userStore.refreshFlag = 1;
+    await userStore.fetchCartItems();
 
     // Redirect to the success page after a short delay
-    setTimeout(() => {
-      console.log("Redirecting to the success page...");
-      navigateTo("/success"); // Redirect to the success page
-    }, 500);
   } catch (error) {
     console.error("Error placing the order:", error); // Log any error that occurs
   }

@@ -77,7 +77,6 @@ export const useUserStore = defineStore("user", {
 
       if (userId) {
         try {
-          // Replace with your actual API endpoint
           cartResponse.value = await useFetch(
             `/api/prisma/get-cart-by-user/${userId}`
           );
@@ -87,10 +86,7 @@ export const useUserStore = defineStore("user", {
           }
 
           if (cartResponse.value.data && cartResponse.value.data.cartItems) {
-            this.cartItems = cartResponse.value.data.cartItems; // Set the fetched cart items
-            //this.products = cartResponse.value.data.cartItems.product;
-            //console.log(this.cartItems[0].product);
-            //console.log(this.products);
+            this.cartItems = cartResponse.value.data.cartItems;
 
             console.log("Cart items fetched successfully");
             this.isLoading = false;
@@ -102,7 +98,7 @@ export const useUserStore = defineStore("user", {
           console.error("Failed to fetch cart:", error);
           this.isLoading = false;
         } finally {
-          this.isLoading = false; // Set loading to false after the fetch is done
+          this.isLoading = false;
         }
       } else {
         console.warn("No user ID found, cannot fetch cart items.");
@@ -111,5 +107,5 @@ export const useUserStore = defineStore("user", {
     },
   },
 
-  persist: true, // This will persist the store data
+  persist: true,
 });
