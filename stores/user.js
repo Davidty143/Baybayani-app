@@ -22,7 +22,7 @@ export const useUserStore = defineStore("user", {
         return; // Skip fetching if user is already set
       }
       console.log("FETCH USER RUNNING");
-      this.isLoading = true;
+      //this.isLoading = true;
       try {
         const client = useSupabaseClient();
         const { data, error } = await client.auth.getUser();
@@ -62,7 +62,7 @@ export const useUserStore = defineStore("user", {
       if (this.cartItems.length > 0 && this.refreshFlag === 0) return;
 
       console.log("FETCH CART RUNNING");
-      this.isLoading = true;
+      //this.isLoading = true;
       let cartResponse = ref(null);
 
       const userId = this.user?.id;

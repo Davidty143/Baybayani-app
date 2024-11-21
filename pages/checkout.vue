@@ -1,7 +1,8 @@
 <template>
-  <MainLayout>
+  <AdminLayout>
     <div id="CheckoutPage" class="mt-4 max-w-[1200px] mx-auto px-2">
       <div class="md:flex gap-4 justify-between mx-auto w-full">
+        <!-- Pickup Information -->
         <div class="md:w-[65%]">
           <div class="bg-white rounded-lg p-4">
             <div class="text-xl font-semibold mb-2">Pickup Information</div>
@@ -26,11 +27,13 @@
               </ul>
             </div>
           </div>
-
-          <!-- Product Populate -->
           <div id="Items" class="bg-white rounded-lg p-4 mt-4">
-            <div v-for="product in userStore.checkout" :key="product.id">
-              <CheckoutItem :product="product" />
+            <div
+              v-for="(cartItem, index) in userStore.checkout"
+              :key="cartItem.id"
+            >
+              <!-- Use the index to find the specific cartItem in the checkout array -->
+              <CheckoutItem :product="userStore.checkout[index].product" />
             </div>
           </div>
         </div>
@@ -45,11 +48,9 @@
 
             <div class="flex items-center justify-between my-4">
               <div class="font-semibold">Total</div>
-              <div class="text-2xl font-semibold text-[#FD374F]">
+              <div class="text-2xl font-semi bold text-[#FD374F]">
                 ₱
-                <span class="font-extrabold text-[#FD374F]">{{
-                  total / 100
-                }}</span>
+                <span class="font-extrabold text-[#FD374F]">{{ total }}</span>
               </div>
             </div>
 
@@ -63,49 +64,97 @@
         </div>
       </div>
     </div>
-  </MainLayout>
+  </AdminLayout>
 </template>
 
 <script setup>
-import MainLayout from "~/layouts/MainLayout.vue";
+import AdminLayout from "~/layouts/AdminLayout.vue";
 import { useUserStore } from "~/stores/user";
 const userStore = useUserStore();
 const user = useSupabaseUser();
 const route = useRoute();
 
-definePageMeta({ middleware: "auth" });
+//definePageMeta({ middleware: "auth" });
 
 let total = ref(0);
 
-watchEffect(() => {
-  if (route.fullPath == "/checkout" && !user.value) {
-    return navigateTo("/auth");
-  }
-});
+// watchEffect(() => {
+//   if (route.fullPath == "/checkout" && !user.value) {
+//     navigateTo("/login");
+//   } else if (route.fullPath == "/checkout" && userStore.checkout.length === 0) {
+//     navigateTo("/shoppingcart");
+//   }
+// });
 
 onMounted(() => {
+  if (route.fullPath == "/checkout" && !user.value) {
+    navigateTo("/login");
+  } else if (route.fullPath == "/checkout" && userStore.checkout.length === 0) {
+    navigateTo("/shoppingcart");
+  }
   userStore.checkout.forEach((item) => {
-    total.value += item.price;
+    console.log(item); // Print the item to inspect its properties
+    total.value += item.product.price * item.quantity;
   });
 });
 
 const placeOrder = async () => {
-  // Create order without delivery address and Stripe payment
-  await createOrder();
-  userStore.cart = [];
-  userStore.checkout = [];
-  setTimeout(() => {
-    return navigateTo("/success");
-  }, 500);
+  try {
+    console.log("Placing the order...");
+
+    // Log user and checkout items before creating the order
+    console.log("User ID:", user.value.id); // Log user ID
+    console.log("Checkout items:", userStore.checkout); // Log the checkout items
+
+    // Call createOrder to send the order to the backend
+    await createOrder();
+
+    // Clear the checkout items after placing the order
+    //userStore.cart = []; // Clear the cart (optional, if you want to empty the cart after order)
+    userStore.checkout = []; // Clear the checkout items
+    console.log("Checkout items cleared.");
+
+    // Redirect to the success page after a short delay
+    setTimeout(() => {
+      console.log("Redirecting to the success page...");
+      navigateTo("/success"); // Redirect to the success page
+    }, 500);
+  } catch (error) {
+    console.error("Error placing the order:", error); // Log any error that occurs
+  }
 };
 
 const createOrder = async () => {
-  await useFetch("/api/prisma/create-order", {
-    method: "POST",
-    body: {
+  try {
+    console.log("Creating order with the following data:");
+
+    const checkoutData = userStore.checkout.map((item) => ({
+      productId: item.product.id,
+      quantity: item.quantity,
+    }));
+
+    // Log the order data before sending it to the backend
+    console.log("Order data:", {
       userId: user.value.id,
-      products: userStore.checkout,
-    },
-  });
+      checkoutItem: checkoutData,
+    });
+
+    // Send the request to the backend to create the order
+    const response = await useFetch("/api/prisma/create-order", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json", // Ensure correct header
+      },
+      body: JSON.stringify({
+        userId: user.value.id,
+        checkoutItem: checkoutData,
+      }),
+    });
+
+    // Log the response from the API
+    console.log("Order response:", response);
+  } catch (error) {
+    console.error("Error creating the order:", error);
+  }
 };
 </script>

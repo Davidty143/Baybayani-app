@@ -99,12 +99,35 @@ const selectedItemsCount = computed(() => selectedArray.value.length);
 const totalWeight = computed(() => {
   return selectedArray.value.reduce((sum, item) => sum + item.quantity, 0);
 });
+
 const totalPriceComputed = computed(() => {
-  return selectedArray.value.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0
-  );
+  console.log("PRICE COMPUTE FLAG");
+
+  // Log the selectedArray and individual item details
+  console.log("Selected Array:", selectedArray.value);
+
+  const total = selectedArray.value.reduce((sum, item) => {
+    console.log(
+      `Item: ${JSON.stringify(item)}, Price: ${item.price}, Quantity: ${
+        item.quantity
+      }`
+    );
+    return sum + item.price * item.quantity;
+  }, 0);
+
+  console.log("Total Price:", total);
+
+  return total;
 });
+
+// const totalPriceComputed = computed(() => {
+//   console.log("PRICE COMPUTE FLAG");
+
+//   return selectedArray.value.reduce(
+//     (sum, item) => sum + item.price * item.quantity,
+//     0
+//   );
+// });
 
 const selectedRadioFunc = (e) => {
   const existingIndex = selectedArray.value.findIndex(
@@ -125,19 +148,53 @@ const selectedRadioFunc = (e) => {
 };
 
 const goToCheckout = () => {
-  let ids = [];
+  // Step 1: Get the list of selected item IDs
+  const ids = selectedArray.value.map((item) => item.id);
+  console.log("Selected Item IDs:", ids);
+
+  if (ids.length === 0) {
+    console.log("No items selected.");
+    return;
+  }
+
+  if (!userStore.cartItems || userStore.cartItems.length === 0) {
+    console.log("No items in cart.");
+    return;
+  }
+
   userStore.checkout = [];
+  console.log("Checkout array initialized:", userStore.checkout);
 
-  selectedArray.value.forEach((item) => ids.push(item.id));
+  let res = userStore.cartItems.filter((item) => ids.includes(item.productId));
+  console.log("Filtered Cart Items:", res);
 
-  let res = userStore.cart.filter((item) => {
-    return ids.indexOf(item.id) != -1;
+  if (res.length === 0) {
+    console.log("No matching items found in the cart.");
+    return;
+  }
+
+  res.forEach((item) => {
+    console.log("Adding item to checkout:", item.product);
+    userStore.checkout.push(toRaw(item)); // Add the entire item to checkout
   });
 
-  res.forEach((item) => userStore.checkout.push(toRaw(item)));
+  console.log("Checkout array after addition:", userStore.checkout);
 
+  console.log("Navigating to checkout...");
   return navigateTo("/checkout");
 };
+
+// const goToCheckout = () => {
+//   let ids = [];
+//   userStore.checkout = [];
+//   selectedArray.value.forEach((item) => ids.push(item.id));
+//   let res = userStore.cart.filter((item) => {
+//     //   return ids.indexOf(item.id) != -1;
+//   });
+//   res.forEach((item) => userStore.checkout.push(toRaw(item)));
+
+//   return navigateTo("/checkout");
+// };
 
 watchEffect(async () => {
   if (!user.value) {

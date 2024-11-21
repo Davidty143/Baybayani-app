@@ -179,9 +179,9 @@ const addToCart = async () => {
     console.log("Ready to call");
     await userStore.fetchCartItems();
 
-    setTimeout(() => {
-      userStore.isLoading = false; // Set loading to false after 2 seconds
-    }, 500);
+    // setTimeout(() => {
+    //   userStore.isLoading = false; // Set loading to false after 2 seconds
+    // }, 20);
 
     // Check if the API response was successful
   } catch (error) {

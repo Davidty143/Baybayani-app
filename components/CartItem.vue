@@ -158,6 +158,7 @@ const emitSelectionUpdate = () => {
   emit("selectedRadio", {
     id: product.value.id,
     quantity: product.value.quantity, // Send the quantity as well
+    price: product.value.price,
     val: isSelected.value,
   });
 };
@@ -170,8 +171,6 @@ watch(
 );
 
 const updateQuantity = () => {
-  console.log("Updating quantity for product", product.value.id);
-
   // Find the product index in the cartItems array
   const cartIndex = userStore.cartItems.findIndex(
     (item) => item.productId === product.value.id
