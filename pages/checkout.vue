@@ -2,7 +2,6 @@
   <MainLayout>
     <div id="CheckoutPage" class="mt-4 max-w-[1200px] mx-auto px-2">
       <div class="md:flex gap-4 justify-between mx-auto w-full">
-        <!-- Pickup Information -->
         <div class="md:w-[65%]">
           <div class="bg-white rounded-lg p-4">
             <div class="text-xl font-semibold mb-2">Pickup Information</div>
