@@ -102,7 +102,6 @@ export default defineEventHandler(async (event) => {
         where: {
           cartId: cart.id, // Ensure we're deleting from the correct cart
           productId: item.productId, // Match by productId
-          quantity: item.quantity, // Match by quantity
         },
       });
       console.log(`Deleted cart item with productId: ${item.productId}`);
