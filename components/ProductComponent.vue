@@ -20,7 +20,7 @@
           >
           <span
             class="bg-[#F5F5F5] border text-[#C08562] text-[10px] font-semibold px-1.5 rounded-sm"
-            >Top Selling</span
+            >Fresh</span
           >
         </div>
 

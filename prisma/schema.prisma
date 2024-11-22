@@ -44,19 +44,20 @@ model CartItem {
 model Orders {
   id         String      @id @default(uuid()) @db.Uuid // Use UUID for the order's primary key
   userId     String      @db.Uuid // Foreign key pointing to User's `id`
-  total_price Int
   created_at DateTime?   @default(now()) @db.Timestamptz(6)
+  modified_at DateTime?   @default(now()) @db.Timestamptz(6)
   orderItem  OrderItem[]
   // Relation to User model
-
   user User @relation(fields: [userId], references: [id])
-   totalPrice Decimal?
+   totalPrice Int?
+   orderStatus OrderStatus @default(PENDING)
 }
 
 model OrderItem {
   id         Int       @id @default(autoincrement())
   orderId    String    @db.Uuid // Foreign key pointing to Orders' `id`
   productId  Int
+  quantity   Int       @default(1)
   created_at DateTime? @default(now()) @db.Timestamptz(6)
   // Relations to Orders and Products models
   order   Orders   @relation(fields: [orderId], references: [id])
@@ -73,6 +74,7 @@ model Products {
   orderItem   OrderItem[] // One-to-many relation to OrderItem
   farmer     Farmer[]   @relation("FarmerProducts")
   CartItem    CartItem[]
+  hidden      Boolean  @default(false)
 }
 
 model Farmer {
@@ -87,4 +89,12 @@ enum Status {
   ACTIVE
   INACTIVE
   SUSPENDED
+}
+
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  FULFILLED
+  CANCELED
 }

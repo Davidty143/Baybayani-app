@@ -1,5 +1,6 @@
 <template>
   <AdminLayout>
+    <!---->
     <Loading v-if="userStore.isLoading" />
     <div id="ItemPage" class="mt-4 max-w-[1200px] mx-auto px-2">
       <div class="md:flex gap-4 justify-between mx-auto w-full">
@@ -51,7 +52,7 @@
             <span
               class="bg-[#F5F5F5] border text-[#C08562] text-[12px] font-semibold px-1.5 rounded-sm"
             >
-              Top selling
+              Fresh
             </span>
           </div>
 
@@ -66,24 +67,6 @@
             <div v-else>Add to Cart</div>
           </button>
         </div>
-      </div>
-
-      <!-- Display cart items (if any) -->
-      <div v-if="userStore.cartItems.length > 0">
-        <h3 class="mt-6 text-xl font-semibold">Your Cart:</h3>
-        <ul>
-          <li
-            v-for="item in userStore.cartItems"
-            :key="item.productId"
-            class="py-2"
-          >
-            <p>Product: {{ item.productTitle }}</p>
-            <p>Quantity: {{ item.quantity }}</p>
-          </li>
-        </ul>
-      </div>
-      <div v-else>
-        <p>Your cart is empty.</p>
       </div>
     </div>
   </AdminLayout>

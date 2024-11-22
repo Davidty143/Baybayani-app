@@ -163,6 +163,7 @@ import { useUserStore } from "~/stores/user";
 const userStore = useUserStore();
 
 //if (!userStore.) {
+//userStore.refreshFlag = 1;
 await userStore.fetchCartItems();
 //}
 
