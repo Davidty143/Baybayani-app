@@ -96,8 +96,8 @@ onBeforeMount(async () => {
 
 watchEffect(() => {
   if (product.value && product.value.data) {
-    currentImage.value = product.value.data.url;
-    images.value[0] = product.value.data.url;
+    currentImage.value = product.value.data.url || images.value[0]; // Fallback to first image if no valid URL
+    images.value[0] = product.value.data.url || images.value[0]; // Update image list
     userStore.isLoading = false;
   }
 });

@@ -164,7 +164,7 @@ const userStore = useUserStore();
 
 //if (!userStore.) {
 //userStore.refreshFlag = 1;
-await userStore.fetchCartItems();
+//await userStore.fetchCartItems();
 //}
 
 const client = useSupabaseClient();
